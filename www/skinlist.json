@@ -1,0 +1,19 @@
+{
+  "skin": [
+    {
+      "title":"金属电子台钟",
+      "sample": "DigitalClock.png",
+      "file":"DigitalClock.skn"
+    },
+    {
+      "title":"金属翻页台钟",
+      "sample": "DigitalFlipClock.png",
+      "file":"DigitalFlipClock.skn"
+    },
+    {
+      "title":"简单数字台钟",
+      "sample": "TextClock.png",
+      "file":"TextClock.skn"
+    }
+  ]
+}

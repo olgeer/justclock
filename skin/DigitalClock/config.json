@@ -1,0 +1,85 @@
+{
+  "skinName": "DigitalClock",
+  "skinBasePath": "DigitalClock",
+  "yearItem": null,
+  "monthItem": null,
+  "dayItem": null,
+  "weekdayItem": null,
+  "timeType": 1,
+  "hourItem": {
+    "style": 2,
+    "rect": {
+      "left": -257.0,
+      "top": -110.5,
+      "right": -35.0,
+      "bottom": 128.5
+    },
+    "imgs": null,
+    "imgPrename": "d",
+    "imgExtname": ".png",
+    "textStyle": null
+  },
+  "minuteItem": {
+    "style": 2,
+    "rect": {
+      "left": -18.0,
+      "top": -110.5,
+      "right": 204.0,
+      "bottom": 128.5
+    },
+    "imgs": null,
+    "imgPrename": "d",
+    "imgExtname": ".png",
+    "textStyle": null
+  },
+  "h12Item": {
+    "style": 1,
+    "rect": {
+      "left": 215.5,
+      "top": -120.5,
+      "right": 260.5,
+      "bottom": -35.5
+    },
+    "imgs": [
+      "am.png",
+      "pm.png"
+    ],
+    "imgPrename": null,
+    "imgExtname": null,
+    "textStyle": null
+  },
+  "tiktokItem": {
+    "style": 1,
+    "rect": {
+      "left": 215.5,
+      "top": 75.0,
+      "right": 260.5,
+      "bottom": 125.0
+    },
+    "imgs": [
+      "poweroff.png",
+      "poweron.png"
+    ],
+    "imgPrename": null,
+    "imgExtname": null,
+    "textStyle": null
+  },
+  "exitItem": {
+    "style": 1,
+    "rect": {
+      "left": 215.5,
+      "top": 75.0,
+      "right": 260.5,
+      "bottom": 125.0
+    },
+    "imgs": null,
+    "imgPrename": null,
+    "imgExtname": null,
+    "textStyle": null
+  },
+  "backgroundColor": 4278190080,
+  "backgroundImage": "bg.png",
+  "bodyImage": "body2.png",
+  "height": 360.0,
+  "width": 640.0
+}
