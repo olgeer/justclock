@@ -1,4 +1,0 @@
-cd web/justclock/android
-rm app.apk
-put ./build/app/outputs/flutter-apk/app.apk .
-quit
