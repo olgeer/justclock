@@ -681,11 +681,11 @@ enum TikTokStyle { text, pic, icon }
 enum ActionStyle { text, pic, icon, empty }
 
 class ItemConfig {
-  int style;         //样式的index值，根据item的不同有不同的对应关系
-  Rect rect;         //item的作用范围，采用中心坐标
-  List<String> imgs; //优先使用imgs，如果imgs为null，则检测imgPrename和imgExtname;
-  String imgPrename; //系列图片的前缀，如 hour00.png 中的 "hour"
-  String imgExtname; //系列图片的后缀，如 hour00.png 中的 ".png"
+  int style;            //样式的index值，根据item的不同有不同的对应关系
+  Rect rect;            //item的作用范围，采用中心坐标
+  List<String> imgs;    //优先使用imgs，如果imgs为null，则检测imgPrename和imgExtname;
+  String imgPrename;    //系列图片的前缀，如 hour00.png 中的 "hour"
+  String imgExtname;    //系列图片的后缀，如 hour00.png 中的 ".png"
   TextStyle textStyle;  //文本显示样式，当item样式为文本时有效，其余忽略
 
   ItemConfig({
