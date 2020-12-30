@@ -9,16 +9,19 @@ import 'package:justclock/widget/clockSetting.dart';
 import 'package:justclock/pkg/utils.dart';
 import 'package:wakelock/wakelock.dart';
 
+
 class DigitalClock extends StatefulWidget {
   final double height;
   final double width;
-  final DigitalClockConfig config;
+  DigitalClockConfig config;
+  eventCall onSettingChange;
 
   DigitalClock({
     this.height = 100,
     this.width = 200,
-    this.config,
-  }) : super();
+    @required this.config,
+    this.onSettingChange,
+  }) :assert(config!=null), super();
 
   @override
   State<StatefulWidget> createState() => DigitalClockState();
@@ -27,6 +30,7 @@ class DigitalClock extends StatefulWidget {
 class DigitalClockState extends State<DigitalClock> {
   int hours, minutes, years, months, days, weekday;
   int h12 = 0, tk = 0;
+  String currentSkinName;
   String skinBasePath;
   Timer clockTimer;
   double scale = 1;
@@ -57,6 +61,7 @@ class DigitalClockState extends State<DigitalClock> {
   }
 
   void init() {
+    currentSkinName=widget.config.skinName;
     xScale = widget.width / widget.config.width;
     yScale = widget.height / widget.config.height;
     scale = xScale < yScale ? xScale : yScale;
@@ -81,6 +86,11 @@ class DigitalClockState extends State<DigitalClock> {
         max: widget.config.timeType == TimeType.h12 ? 12 : 23,
         currentValue: hours,
       );
+    }else{
+      if(hourFlipNumber!=null){
+        // hourFlipNumber.controller.dispose();
+        hourFlipNumber=null;
+      }
     }
 
     if (widget.config.minuteItem?.style == TimeStyle.flip.index) {
@@ -95,6 +105,11 @@ class DigitalClockState extends State<DigitalClock> {
         max: 59,
         currentValue: minutes,
       );
+    }else{
+      if(minuteFlipNumber!=null){
+        // minuteFlipNumber.controller.dispose();
+        minuteFlipNumber=null;
+      }
     }
 
     Wakelock.enable();
@@ -140,10 +155,10 @@ class DigitalClockState extends State<DigitalClock> {
 
   EdgeInsets buildEdgeRect(Rect itemRect) {
     double rectScale = scale;
-    double l = ((widget.config.width / 2) + itemRect.left) * xScale;
-    double t = ((widget.config.height / 2) + itemRect.top) * yScale;
-    double r = ((widget.config.width / 2) - itemRect.right) * xScale;
-    double b = ((widget.config.height / 2) - itemRect.bottom) * yScale;
+    double l = ((widget.config.width / 2) + itemRect.left) * rectScale;
+    double t = ((widget.config.height / 2) + itemRect.top) * rectScale;
+    double r = ((widget.config.width / 2) - itemRect.right) * rectScale;
+    double b = ((widget.config.height / 2) - itemRect.bottom) * rectScale;
     // print("EdgeInsets.fromLTRB($l,$t,$r,$b)");
     return EdgeInsets.fromLTRB(l, t, r, b);
   }
@@ -575,26 +590,26 @@ class DigitalClockState extends State<DigitalClock> {
         builder: (context) {
           return SettingComponent();
         },
-      )).then((t){setState(() {});print("fresh!${widget.config.skinName}");}),
+      )).then((t){
+        if(widget.onSettingChange!=null)widget.onSettingChange(t);
+      }),
       child: Container(
-        // color: Colors.white12,
+        color: Colors.transparent,
         height: widget.config.height * scale,
         width: widget.config.width * scale,
         margin: buildEdgeRect(settingItem.rect),
         alignment: Alignment.center,
         child: settingItem.style == ActionStyle.pic.index && picName != null
-            ? Image.asset(
-                picName,
+            ? Image.file(
+                File(picName),
                 fit: BoxFit.cover,
               )
             : settingItem.style == ActionStyle.icon.index && picName != null
-                ? IconButton(
-                    icon: Icon(
-                      IconData(int.parse(picName), fontFamily: "MaterialIcons"),
+                ?  Icon(
+                      new IconData(int.parse(picName), fontFamily: "MaterialIcons"),
                       color: widget.config.foregroundColor,
-                      size: 32,
-                    ),
-                  )
+                      size: 12 * scale,
+                    )
                 : nullWidget,
       ),
     );
@@ -602,6 +617,9 @@ class DigitalClockState extends State<DigitalClock> {
 
   @override
   Widget build(BuildContext context) {
+    if(widget.config.skinName.compareTo(currentSkinName)!=0){
+      init();
+    }
     return Container(
         height: widget.height,
         width: widget.width,

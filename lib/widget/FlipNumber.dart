@@ -140,8 +140,8 @@ class _FlipNumberState extends State<FlipNumber>
         }
       }
     }
-    print("current=$_currentIndex");
-    print("next=$_nextIndex");
+    // print("current=$_currentIndex");
+    // print("next=$_nextIndex");
     return _nextIndex;
   }
 

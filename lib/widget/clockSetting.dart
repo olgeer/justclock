@@ -21,9 +21,6 @@ class SettingComponentState extends State<SettingComponent> {
   var skinList;
   Map<String, String> skinMap;
   String skinPkgUrl;
-  TextStyle titleStyle = TextStyle(fontSize: 12);
-  TextStyle subtitleStyle = TextStyle(fontSize: 9);
-  TextStyle settingTitleStyle = TextStyle(fontSize: 16);
   TextStyle settingChapterStyle = TextStyle(fontSize: 20, color: Colors.black);
 
   @override
@@ -67,13 +64,14 @@ class SettingComponentState extends State<SettingComponent> {
           String skinFile=await saveUrlFile("${Setting.apiDomain}skins/${m["file"]}",
               saveFileWithoutExt:
                   "$skinDir$skinName");
-          //todo:extract the archive file
+
+          //extract the archive file
           final zipFile = File(skinFile);
           final destinationDir = Directory(skinDir);
           print(zipFile.path);
           print(destinationDir.path);
           try {
-            ZipFile.extractToDirectory(zipFile: zipFile, destinationDir: destinationDir);
+            await ZipFile.extractToDirectory(zipFile: zipFile, destinationDir: destinationDir);
           } catch (e) {
             print(e);
           }
@@ -82,7 +80,7 @@ class SettingComponentState extends State<SettingComponent> {
         Application.cache.setString(DefaultSkin, skinName);
 
         showToast("皮肤已更换为$skinTitle");
-        Navigator.pop(context);
+        Navigator.pop(context,"setting changed !");
       }
     }
   }

@@ -75,6 +75,7 @@ class ClockComponentState extends State<ClockComponent> {
     "DigitalClock",
     height: 360,
     width: 640,
+    foregroundColor: Colors.grey,
     backgroundColor: Colors.black,
     backgroundImage: "bg.png",
     bodyImage: "body2.png",
@@ -100,6 +101,11 @@ class ClockComponentState extends State<ClockComponent> {
       rect: Rect.fromCenter(center: Offset(238, -78), width: 45, height: 85),
       imgs: ["am.png", "pm.png"],
     ),
+    settingItem: ItemConfig(
+      style: ActionStyle.icon.index,
+      rect: Rect.fromCenter(center: Offset(238, 50), width: 14, height: 12),
+      imgs: [Icons.settings.codePoint.toString()],
+    ),
     exitItem: ItemConfig(
       style: H12Style.pic.index,
       rect: Rect.fromCenter(center: Offset(238, 100), width: 45, height: 50),
@@ -110,6 +116,7 @@ class ClockComponentState extends State<ClockComponent> {
     "DigitalFlipClock",
     height: 360,
     width: 640,
+    foregroundColor: Colors.grey,
     backgroundColor: Colors.black,
     backgroundImage: "bg.png",
     bodyImage: "body2.png",
@@ -135,6 +142,11 @@ class ClockComponentState extends State<ClockComponent> {
       rect: Rect.fromCenter(center: Offset(238, -78), width: 45, height: 85),
       imgs: ["am.png", "pm.png"],
     ),
+    settingItem: ItemConfig(
+      style: ActionStyle.icon.index,
+      rect: Rect.fromCenter(center: Offset(230, 20), width: 14, height: 12),
+      imgs: [Icons.settings.codePoint.toString()],
+    ),
     exitItem: ItemConfig(
       style: H12Style.pic.index,
       rect: Rect.fromCenter(center: Offset(238, 100), width: 45, height: 50),
@@ -154,17 +166,24 @@ class ClockComponentState extends State<ClockComponent> {
 
   void reloadConfig() {
     if (Application.defaultSkin != null) {
+      // Application.defaultSkin="DigitalFlipClock";
+
       print("load ${Application.defaultSkin} skin");
-      File clockConfigFile=File(
+      File clockConfigFile = File(
           "${Application.appRootPath}/skins/${Application.defaultSkin}/config.json");
-      if(clockConfigFile.existsSync()) {
+
+      if (clockConfigFile.existsSync()) {
         clockConfig = DigitalClockConfig.fromFile(clockConfigFile);
+
+        // clockConfig=DigitalClockConfig.fromJson(flipClock.toString());
+
         clockConfig.skinBasePath =
-        "${Application.appRootPath}/skins/${Application.defaultSkin}/";
-      }else
+            "${Application.appRootPath}/skins/${Application.defaultSkin}/";
+      } else
         clockConfig = textClock;
     } else
       clockConfig = textClock;
+    print("finally use ${clockConfig.skinName} config.");
   }
 
   @override
@@ -175,6 +194,13 @@ class ClockComponentState extends State<ClockComponent> {
 
   void setDefaultSkin(String skinName) {
     Application.cache.setString(DefaultSkin, skinName);
+  }
+
+  void onSettingChange(dynamic t) {
+    print(t);
+    setState(() {
+      reloadConfig();
+    });
   }
 
   @override
@@ -194,6 +220,7 @@ class ClockComponentState extends State<ClockComponent> {
           height: screenSize.height,
           width: screenSize.width,
           config: clockConfig,
+          onSettingChange: onSettingChange,
         ),
       ),
     );

@@ -64,6 +64,19 @@
     "imgExtname": null,
     "textStyle": null
   },
+  "settingItem": {
+    "style": 3,
+    "rect": {
+      "left": 215.5,
+      "top": -120.5,
+      "right": 260.5,
+      "bottom": -35.5
+    },
+    "imgs": null,
+    "imgPrename": null,
+    "imgExtname": null,
+    "textStyle": null
+  },
   "exitItem": {
     "style": 1,
     "rect": {
@@ -77,6 +90,7 @@
     "imgExtname": null,
     "textStyle": null
   },
+  "foregroundColor": 4285132974,
   "backgroundColor": 4278190080,
   "backgroundImage": "bg.png",
   "bodyImage": "body2.png",
