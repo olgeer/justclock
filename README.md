@@ -103,7 +103,7 @@ enum TikTokStyle { text, pic, icon }
 enum ActionStyle { text, pic, icon, empty }
 ```
 
-####完整的示例
+##完整的示例
 ```dart
 import 'package:justclock/widget/digitalClock.dart';
 import 'package:flutter/material.dart';
