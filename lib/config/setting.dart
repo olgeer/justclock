@@ -9,7 +9,7 @@ import 'package:log_4_dart_2/log_4_dart_2.dart';
 class Setting {
   static String configVersion = "1.0";
   static String configDomain = "http://olgeer.3322.org:8888/justclock/setting.json";
-  static String apiDomain;
+  static String apiDomain="http://olgeer.3322.org:8888/justclock/";
   static String androidVersion = "1.0";
   static String androidUpdateLog;
   static String iosVersion = "1.0";
@@ -26,11 +26,11 @@ class Setting {
         Map<String, dynamic> setting = json.decode(settingStr);
 
         fromJson(setting);
-        print("load setting.json success !");
+        Logger().info("Setting","load setting.json success !");
       }
     } catch (e) {
-      print("Setting file is invaild ! [$settingStr]");
-      print(e);
+      Logger().error("Setting","Setting file is invaild ! [$settingStr]");
+      Logger().error("Setting",e);
     }finally{
       await loadSettingFromUrl(configDomain);
     }
@@ -66,7 +66,7 @@ class Setting {
       }
       //print("Setting is ${Setting()}");
     } catch (e) {
-      print(e);
+      Logger().error("Setting",e);
     }
   }
 

@@ -14,7 +14,7 @@ var config = {
       'type': 'FILE',
       'dateFormat': 'yyyy-MM-dd HH:mm:ss',
       'format': '%d %i %t %l %m',
-      'level': 'DEBUG',
+      'level': 'INFO',
       'filePattern': 'justclock_log',
       'fileExtension': 'txt',
       'path': '${Application.appRootPath}/log/',

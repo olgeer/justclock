@@ -25,8 +25,8 @@ class SettingComponentState extends State<SettingComponent> {
 
   @override
   void initState() {
-    loadSkinList();
     super.initState();
+    loadSkinList();
   }
 
   @override
@@ -39,7 +39,7 @@ class SettingComponentState extends State<SettingComponent> {
       "${Setting.apiDomain}www/skinlist.json",
     ))
         .bodyBytes);
-    largePrint(skinJson);
+    // showToast(skinJson);
 
     skinList = json.decode(skinJson);
     if (skinList != null && skinList["skin"] != null) {
@@ -52,18 +52,16 @@ class SettingComponentState extends State<SettingComponent> {
     setState(() {});
   }
 
-  void changeSkin(String skinTitle, ImageProvider sample) async{
-    String skinDir="${Application.appRootPath}/skins/";
+  void changeSkin(String skinTitle, ImageProvider sample) async {
+    String skinDir = "${Application.appRootPath}/skins/";
     for (var m in skinList["skin"]) {
       if (skinTitle.compareTo(m["title"]) == 0) {
-        String skinName=getFileName(m["file"]);
-        if (!File(
-                "$skinDir$skinName/config.json")
-            .existsSync()) {
+        String skinName = getFileName(m["file"]);
+        if (!File("$skinDir$skinName/config.json").existsSync()) {
           skinPkgUrl = "${Setting.apiDomain}skins/${m["file"]}";
-          String skinFile=await saveUrlFile("${Setting.apiDomain}skins/${m["file"]}",
-              saveFileWithoutExt:
-                  "$skinDir$skinName");
+          String skinFile = await saveUrlFile(
+              "${Setting.apiDomain}skins/${m["file"]}",
+              saveFileWithoutExt: "$skinDir$skinName");
 
           //extract the archive file
           final zipFile = File(skinFile);
@@ -71,16 +69,17 @@ class SettingComponentState extends State<SettingComponent> {
           print(zipFile.path);
           print(destinationDir.path);
           try {
-            await ZipFile.extractToDirectory(zipFile: zipFile, destinationDir: destinationDir);
+            await ZipFile.extractToDirectory(
+                zipFile: zipFile, destinationDir: destinationDir);
           } catch (e) {
             print(e);
           }
         }
-        Application.defaultSkin=skinName;
+        Application.defaultSkin = skinName;
         Application.cache.setString(DefaultSkin, skinName);
 
         showToast("皮肤已更换为$skinTitle");
-        Navigator.pop(context,"setting changed !");
+        Navigator.pop(context, "setting changed !");
       }
     }
   }
@@ -91,48 +90,48 @@ class SettingComponentState extends State<SettingComponent> {
       color: Colors.black,
       alignment: Alignment.center,
       child: ListView(children: [
-        Card(
-          child: Container(
-            margin: EdgeInsets.all(10),
-            child: SmartFolder(
-              // onExpansionChanged: (e) {
-              //   unfocusAll();
-              // },
-              initiallyExpanded: true,
-              tileColor: Colors.grey,
-              child: Container(
-                alignment: Alignment.centerLeft,
-                child: ListTile(
-                  leading: Icon(
-                    Icons.settings,
-                    color: Colors.black,
-                    size: 32,
-                  ),
-                  dense: true,
-                  title: Text(
-                    "样式",
-                    style: settingChapterStyle,
-                  ),
-                ),
-              ),
-              children: [
-                Divider(
-                  color: Colors.grey,
-                  thickness: 1.0,
-                ),
-                ImageCardList(
-                  height: 100,
-                  width: 100,
-                  map: {
-                    "数字时钟": "assets/clock/sample.png",
-                    "表盘时钟": "assets/clock/watch.jpg",
-                  },
-                  displayNameTag: true,
-                )
-              ],
-            ),
-          ),
-        ),
+        // Card(
+        //   child: Container(
+        //     margin: EdgeInsets.all(10),
+        //     child: SmartFolder(
+        //       // onExpansionChanged: (e) {
+        //       //   unfocusAll();
+        //       // },
+        //       initiallyExpanded: true,
+        //       tileColor: Colors.grey,
+        //       child: Container(
+        //         alignment: Alignment.centerLeft,
+        //         child: ListTile(
+        //           leading: Icon(
+        //             Icons.settings,
+        //             color: Colors.black,
+        //             size: 32,
+        //           ),
+        //           dense: true,
+        //           title: Text(
+        //             "样式",
+        //             style: settingChapterStyle,
+        //           ),
+        //         ),
+        //       ),
+        //       children: [
+        //         Divider(
+        //           color: Colors.grey,
+        //           thickness: 1.0,
+        //         ),
+        //         ImageCardList(
+        //           height: 100,
+        //           width: 100,
+        //           map: {
+        //             "数字时钟": "assets/clock/sample.png",
+        //             "表盘时钟": "assets/clock/watch.jpg",
+        //           },
+        //           displayNameTag: true,
+        //         )
+        //       ],
+        //     ),
+        //   ),
+        // ),
         skinMap != null
             ? Card(
                 child: Container(
@@ -188,7 +187,7 @@ class SettingComponentState extends State<SettingComponent> {
                   ),
                   dense: true,
                   title: Text(
-                    "退出时钟",
+                    "操作",
                     style: settingChapterStyle,
                   ),
                 ),
@@ -198,12 +197,21 @@ class SettingComponentState extends State<SettingComponent> {
                   color: Colors.grey,
                   thickness: 1.0,
                 ),
-                IconButton(
-                    icon: Icon(
-                      Icons.exit_to_app,
+                ListTile(
+                  title: Text("退出程序"),
+                  trailing: Icon(
+                    Icons.exit_to_app,
+                    size: 32,
+                  ),
+                  onTap: () => SystemNavigator.pop(),
+                ),
+                ListTile(
+                    title: Text("返回"),
+                    trailing: Icon(
+                      Icons.keyboard_return,
                       size: 32,
                     ),
-                    onPressed: () => SystemNavigator.pop())
+                    onTap: () => Navigator.pop(context))
               ],
             ),
           ),

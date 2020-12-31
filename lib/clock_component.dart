@@ -5,6 +5,7 @@ import 'package:justclock/config/application.dart';
 import 'package:justclock/config/constants.dart';
 import 'package:justclock/widget/digitalClock.dart';
 import 'package:flutter/material.dart';
+import 'package:wakelock/wakelock.dart';
 
 class ClockComponent extends StatefulWidget {
   @override
@@ -39,17 +40,17 @@ class ClockComponentState extends State<ClockComponent> {
     hourItem: ItemConfig(
       style: TimeStyle.number.index,
       textStyle: TextStyle(fontSize: 50, color: Colours.lightGoldenRodYellow),
-      rect: Rect.fromCenter(center: Offset(-33, 0), width: 60, height: 46),
+      rect: Rect.fromCenter(center: Offset(-33, 0), width: 60, height: 48),
     ),
     minuteItem: ItemConfig(
       style: TimeStyle.number.index,
       textStyle: TextStyle(fontSize: 50, color: Colours.lightGoldenRodYellow),
-      rect: Rect.fromCenter(center: Offset(47, 0), width: 60, height: 46),
+      rect: Rect.fromCenter(center: Offset(47, 0), width: 60, height: 48),
     ),
     tiktokItem: ItemConfig(
         style: TikTokStyle.text.index,
         textStyle: TextStyle(fontSize: 50, color: Colours.lightGoldenRodYellow),
-        rect: Rect.fromCenter(center: Offset(7, 0), width: 14, height: 46)),
+        rect: Rect.fromCenter(center: Offset(7, 0), width: 14, height: 48)),
     h12Item: ItemConfig(
       style: H12Style.text.index,
       textStyle: TextStyle(fontSize: 9, color: Colours.lightGoldenRodYellow),
@@ -158,6 +159,7 @@ class ClockComponentState extends State<ClockComponent> {
   @override
   void initState() {
     AutoOrientation.landscapeAutoMode();
+    Wakelock.enable();
     reloadConfig();
     // largePrint(textClock);
     // largePrint(flipClock);
@@ -189,6 +191,7 @@ class ClockComponentState extends State<ClockComponent> {
   @override
   void dispose() {
     AutoOrientation.fullAutoMode();
+    Wakelock.disable();
     super.dispose();
   }
 

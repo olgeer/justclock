@@ -10,13 +10,12 @@
 组件名称为 DigitalClock
 
 初始化：
-```dart
+```
     DigitalClock(
-      height: screenSize.height,
-      width: screenSize.width,
-      config: clockConfig,
-      onSettingChange: onSettingChange,
-    )
+      height: 100,
+      width: 200,
+      config: clockConfig
+    );
 ```
 
 其中config为DigitalClockConfig类，使用可参照：

@@ -75,7 +75,7 @@
       "left": -63.0,
       "top": -23.0,
       "right": -3.0,
-      "bottom": 23.0
+      "bottom": 25.0
     },
     "imgs": null,
     "imgPrename": null,
@@ -92,7 +92,7 @@
       "left": 17.0,
       "top": -23.0,
       "right": 77.0,
-      "bottom": 23.0
+      "bottom": 25.0
     },
     "imgs": null,
     "imgPrename": null,
@@ -127,7 +127,7 @@
       "left": 0.0,
       "top": -23.0,
       "right": 14.0,
-      "bottom": 23.0
+      "bottom": 25.0
     },
     "imgs": null,
     "imgPrename": null,
