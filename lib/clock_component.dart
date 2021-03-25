@@ -3,6 +3,7 @@ import 'package:auto_orientation/auto_orientation.dart';
 import 'package:colours/colours.dart';
 import 'package:justclock/config/application.dart';
 import 'package:justclock/config/constants.dart';
+import 'package:justclock/pkg/utils.dart';
 import 'package:justclock/widget/digitalClock.dart';
 import 'package:flutter/material.dart';
 import 'package:wakelock/wakelock.dart';
@@ -79,7 +80,11 @@ class ClockComponentState extends State<ClockComponent> {
     foregroundColor: Colors.grey,
     backgroundColor: Colors.black,
     backgroundImage: "bg.png",
-    bodyImage: "body2.png",
+    bodyImage: ItemConfig(
+      style: TikTokStyle.pic.index,
+      rect: Rect.fromCenter(center: Offset(0, 0), width: 640, height: 360),
+      imgs: ["body2.png"],
+    ),
     timeType: TimeType.h12,
     skinBasePath: "DigitalClock",
     hourItem: ItemConfig(
@@ -103,54 +108,87 @@ class ClockComponentState extends State<ClockComponent> {
       imgs: ["am.png", "pm.png"],
     ),
     settingItem: ItemConfig(
-      style: ActionStyle.icon.index,
-      rect: Rect.fromCenter(center: Offset(238, 50), width: 14, height: 12),
-      imgs: [Icons.settings.codePoint.toString()],
+      style: ActionStyle.empty.index,
+      rect: Rect.fromCenter(center: Offset(238, -78), width: 45, height: 85),
+      imgs: null,
     ),
     exitItem: ItemConfig(
       style: H12Style.pic.index,
       rect: Rect.fromCenter(center: Offset(238, 100), width: 45, height: 50),
     ),
   );
+  //
+  // DigitalClockConfig flipClock = DigitalClockConfig(
+  //   "DigitalFlipClock",
+  //   height: 360,
+  //   width: 640,
+  //   foregroundColor: Colors.grey,
+  //   backgroundColor: Colors.black,
+  //   backgroundImage: "bg.png",
+  //   bodyImage: "body2.png",
+  //   timeType: TimeType.h12,
+  //   skinBasePath: "DigitalFlipClock",
+  //   hourItem: ItemConfig(
+  //     style: TimeStyle.flip.index,
+  //     rect: Rect.fromCenter(center: Offset(-146, 10), width: 210, height: 233),
+  //     textStyle: TextStyle(fontSize: 180, color: Colors.white),
+  //   ),
+  //   minuteItem: ItemConfig(
+  //     style: TimeStyle.flip.index,
+  //     rect: Rect.fromCenter(center: Offset(93, 10), width: 210, height: 233),
+  //     textStyle: TextStyle(fontSize: 180, color: Colors.white),
+  //   ),
+  //   tiktokItem: ItemConfig(
+  //     style: TikTokStyle.pic.index,
+  //     rect: Rect.fromCenter(center: Offset(238, 100), width: 45, height: 50),
+  //     imgs: ["poweroff.png", "poweron.png"],
+  //   ),
+  //   h12Item: ItemConfig(
+  //     style: H12Style.pic.index,
+  //     rect: Rect.fromCenter(center: Offset(238, -78), width: 45, height: 85),
+  //     imgs: ["am.png", "pm.png"],
+  //   ),
+  //   settingItem: ItemConfig(
+  //     style: ActionStyle.icon.index,
+  //     rect: Rect.fromCenter(center: Offset(230, 20), width: 14, height: 12),
+  //     imgs: [Icons.settings.codePoint.toString()],
+  //   ),
+  //   exitItem: ItemConfig(
+  //     style: H12Style.pic.index,
+  //     rect: Rect.fromCenter(center: Offset(238, 100), width: 45, height: 50),
+  //   ),
+  // );
 
-  DigitalClockConfig flipClock = DigitalClockConfig(
-    "DigitalFlipClock",
+  DigitalClockConfig flipClock3 = DigitalClockConfig(
+    "DigitalFlipClock2",
     height: 360,
     width: 640,
     foregroundColor: Colors.grey,
     backgroundColor: Colors.black,
-    backgroundImage: "bg.png",
-    bodyImage: "body2.png",
-    timeType: TimeType.h12,
-    skinBasePath: "DigitalFlipClock",
-    hourItem: ItemConfig(
-      style: TimeStyle.flip.index,
-      rect: Rect.fromCenter(center: Offset(-146, 10), width: 210, height: 233),
-      textStyle: TextStyle(fontSize: 180, color: Colors.white),
-    ),
-    minuteItem: ItemConfig(
-      style: TimeStyle.flip.index,
-      rect: Rect.fromCenter(center: Offset(93, 10), width: 210, height: 233),
-      textStyle: TextStyle(fontSize: 180, color: Colors.white),
-    ),
-    tiktokItem: ItemConfig(
-      style: TikTokStyle.pic.index,
-      rect: Rect.fromCenter(center: Offset(238, 100), width: 45, height: 50),
-      imgs: ["poweroff.png", "poweron.png"],
-    ),
-    h12Item: ItemConfig(
+    backgroundImage: null,
+    bodyImage: ItemConfig(
       style: H12Style.pic.index,
-      rect: Rect.fromCenter(center: Offset(238, -78), width: 45, height: 85),
-      imgs: ["am.png", "pm.png"],
+      rect: Rect.fromCenter(center: Offset(0, 0), width: 461, height: 261),
+      imgs: ["body.png"],
     ),
-    settingItem: ItemConfig(
-      style: ActionStyle.icon.index,
-      rect: Rect.fromCenter(center: Offset(230, 20), width: 14, height: 12),
-      imgs: [Icons.settings.codePoint.toString()],
-    ),
+    timeType: TimeType.h12,
+    skinBasePath: "DigitalFlipClock2",
+    hourItem: ItemConfig(
+        style: TimeStyle.flip.index,
+        rect: Rect.fromCenter(center: Offset(-119, 1), width: 222, height: 239),
+        imgPrename: "d",
+        imgExtname: ".png"),
+    minuteItem: ItemConfig(
+        style: TimeStyle.flip.index,
+        rect: Rect.fromCenter(center: Offset(119, 1), width: 222, height: 239),
+        imgPrename: "d",
+        imgExtname: ".png"),
+    tiktokItem: null,
+    h12Item: null,
+    settingItem: null,
     exitItem: ItemConfig(
       style: H12Style.pic.index,
-      rect: Rect.fromCenter(center: Offset(238, 100), width: 45, height: 50),
+      rect: Rect.fromCenter(center: Offset(119, 1), width: 222, height: 239),
     ),
   );
 
@@ -161,6 +199,10 @@ class ClockComponentState extends State<ClockComponent> {
     AutoOrientation.landscapeAutoMode();
     Wakelock.enable();
     reloadConfig();
+    // clockConfig=flipClock2;
+    // clockConfig.skinBasePath =
+    // "${Application.appRootPath}/skins/${flipClock2.skinBasePath}/";
+
     // largePrint(textClock);
     // largePrint(flipClock);
     // largePrint(flipClock2);

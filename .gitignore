@@ -4,6 +4,7 @@ icons/
 www/
 web/
 keystore/
+.SynologyWorkingDirectory/
 
 # Miscellaneous
 *.class
@@ -15,7 +16,7 @@ keystore/
 .buildlog/
 .history
 .svn/
-.sh
+*.sh
 
 # IntelliJ related
 *.iml

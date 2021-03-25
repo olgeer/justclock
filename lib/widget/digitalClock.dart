@@ -9,7 +9,6 @@ import 'package:justclock/widget/clockSetting.dart';
 import 'package:justclock/pkg/utils.dart';
 import 'package:wakelock/wakelock.dart';
 
-
 class DigitalClock extends StatefulWidget {
   final double height;
   final double width;
@@ -21,7 +20,8 @@ class DigitalClock extends StatefulWidget {
     this.width = 200,
     @required this.config,
     this.onSettingChange,
-  }) :assert(config!=null), super();
+  })  : assert(config != null),
+        super();
 
   @override
   State<StatefulWidget> createState() => DigitalClockState();
@@ -61,7 +61,7 @@ class DigitalClockState extends State<DigitalClock> {
   }
 
   void init() {
-    currentSkinName=widget.config.skinName;
+    currentSkinName = widget.config.skinName;
     xScale = widget.width / widget.config.width;
     yScale = widget.height / widget.config.height;
     scale = xScale < yScale ? xScale : yScale;
@@ -86,10 +86,10 @@ class DigitalClockState extends State<DigitalClock> {
         max: widget.config.timeType == TimeType.h12 ? 12 : 23,
         currentValue: hours,
       );
-    }else{
-      if(hourFlipNumber!=null){
+    } else {
+      if (hourFlipNumber != null) {
         // hourFlipNumber.controller.dispose();
-        hourFlipNumber=null;
+        hourFlipNumber = null;
       }
     }
 
@@ -105,10 +105,10 @@ class DigitalClockState extends State<DigitalClock> {
         max: 59,
         currentValue: minutes,
       );
-    }else{
-      if(minuteFlipNumber!=null){
+    } else {
+      if (minuteFlipNumber != null) {
         // minuteFlipNumber.controller.dispose();
-        minuteFlipNumber=null;
+        minuteFlipNumber = null;
       }
     }
 
@@ -477,7 +477,6 @@ class DigitalClockState extends State<DigitalClock> {
       case H12Style.icon:
         break;
       case H12Style.pic:
-
         retWidget = buildPicItem(f, ic);
         break;
     }
@@ -490,35 +489,44 @@ class DigitalClockState extends State<DigitalClock> {
       height: widget.height,
       width: widget.width,
       child: Image.file(
-        File(widget.config.skinBasePath+bgImage),
+        File(widget.config.skinBasePath + bgImage),
         fit: BoxFit.fill,
       ),
     );
   }
 
-  Widget buildBodyImage(String bodyImage) {
+  Widget buildBodyImage(ItemConfig bodyImage) {
     if (bodyImage == null) return nullWidget;
+
+    String picName;
+    if (bodyImage.imgs != null &&
+        bodyImage.imgs.isNotEmpty &&
+        bodyImage.imgs.length > 0) {
+      picName = "${widget.config.skinBasePath}${bodyImage.imgs.first}";
+    }
     return Container(
-      height: widget.height,
-      width: widget.width,
+      height: widget.height * scale,
+      width: widget.width * scale,
+      margin: buildEdgeRect(bodyImage.rect),
+      alignment: Alignment.center,
       child: Image.file(
-        File(widget.config.skinBasePath+bodyImage),
+        File(picName),
         fit: BoxFit.contain,
       ),
     );
   }
 
-  Widget buildExitControl(ItemConfig exitItem, String basePath) {
+  Widget buildExitControl(ItemConfig exitItem) {
     if (exitItem == null) return nullWidget;
 
     String picName;
     if (exitItem.imgs != null &&
         exitItem.imgs.isNotEmpty &&
         exitItem.imgs.length > 0) {
-      picName = basePath + exitItem.imgs.first;
+      picName = "${widget.config.skinBasePath}${exitItem.imgs.first}";
     }
     if (exitItem.imgPrename != null || exitItem.imgExtname != null) {
-      picName = "$basePath${exitItem.imgPrename}00${exitItem.imgExtname}";
+      picName = "$widget.config.skinBasePath${exitItem.imgPrename}00${exitItem.imgExtname}";
     }
     // print("exitRect:${exitItem.rect}");
     return GestureDetector(
@@ -528,11 +536,11 @@ class DigitalClockState extends State<DigitalClock> {
             builder: (context) => AlertDialog(
                   title: Text("您真的要退出时钟程序吗？"),
                   actions: <Widget>[
-                    FlatButton(
+                    TextButton(
                       child: Text("按错了"),
                       onPressed: () => Navigator.pop(context, false),
                     ),
-                    FlatButton(
+                    TextButton(
                       child: Text("狠心离开"),
                       onPressed: () => SystemNavigator.pop(),
                     ),
@@ -551,11 +559,9 @@ class DigitalClockState extends State<DigitalClock> {
                 fit: BoxFit.cover,
               )
             : exitItem.style == ActionStyle.icon.index && picName != null
-                ? IconButton(
-                    icon: Icon(
-                      IconData(int.parse(picName), fontFamily: "MaterialIcons"),
-                      color: Colors.white,
-                    ),
+                ? Icon(
+                    IconData(int.parse(picName), fontFamily: "MaterialIcons"),
+                    color: Colors.white,
                   )
                 : nullWidget,
       ),
@@ -590,8 +596,8 @@ class DigitalClockState extends State<DigitalClock> {
         builder: (context) {
           return SettingComponent();
         },
-      )).then((t){
-        if(widget.onSettingChange!=null)widget.onSettingChange(t);
+      )).then((t) {
+        if (widget.onSettingChange != null) widget.onSettingChange(t);
       }),
       child: Container(
         color: Colors.transparent,
@@ -605,11 +611,12 @@ class DigitalClockState extends State<DigitalClock> {
                 fit: BoxFit.cover,
               )
             : settingItem.style == ActionStyle.icon.index && picName != null
-                ?  Icon(
-                      new IconData(int.parse(picName), fontFamily: "MaterialIcons"),
-                      color: widget.config.foregroundColor,
-                      size: 12 * scale,
-                    )
+                ? Icon(
+                    new IconData(int.parse(picName),
+                        fontFamily: "MaterialIcons"),
+                    color: widget.config.foregroundColor,
+                    size: 12 * scale,
+                  )
                 : nullWidget,
       ),
     );
@@ -617,7 +624,7 @@ class DigitalClockState extends State<DigitalClock> {
 
   @override
   Widget build(BuildContext context) {
-    if(widget.config.skinName.compareTo(currentSkinName)!=0){
+    if (widget.config.skinName.compareTo(currentSkinName) != 0) {
       init();
     }
     return Container(
@@ -665,7 +672,7 @@ class DigitalClockState extends State<DigitalClock> {
 
             ///exit
             buildExitControl(
-                widget.config.exitItem, widget.config.skinBasePath),
+                widget.config.exitItem),
           ],
         ));
   }
@@ -681,12 +688,12 @@ enum TikTokStyle { text, pic, icon }
 enum ActionStyle { text, pic, icon, empty }
 
 class ItemConfig {
-  int style;            //样式的index值，根据item的不同有不同的对应关系
-  Rect rect;            //item的作用范围，采用中心坐标
-  List<String> imgs;    //优先使用imgs，如果imgs为null，则检测imgPrename和imgExtname;
-  String imgPrename;    //系列图片的前缀，如 hour00.png 中的 "hour"
-  String imgExtname;    //系列图片的后缀，如 hour00.png 中的 ".png"
-  TextStyle textStyle;  //文本显示样式，当item样式为文本时有效，其余忽略
+  int style; //样式的index值，根据item的不同有不同的对应关系
+  Rect rect; //item的作用范围，采用中心坐标
+  List<String> imgs; //优先使用imgs，如果imgs为null，则检测imgPrename和imgExtname;
+  String imgPrename; //系列图片的前缀，如 hour00.png 中的 "hour"
+  String imgExtname; //系列图片的后缀，如 hour00.png 中的 ".png"
+  TextStyle textStyle; //文本显示样式，当item样式为文本时有效，其余忽略
 
   ItemConfig({
     this.style,
@@ -799,7 +806,7 @@ class DigitalClockConfig {
   Color foregroundColor;
 
   ///主体图片
-  String bodyImage;
+  ItemConfig bodyImage;
 
   ///控件基本设置
   double height;
@@ -851,8 +858,8 @@ class DigitalClockConfig {
       backgroundColor: Color(jMap["backgroundColor"] ?? 0x00000000),
       foregroundColor: Color(jMap["foregroundColor"] ?? 0x00ffffff),
       backgroundImage: jMap["backgroundImage"],
-      bodyImage: jMap["bodyImage"],
-      timeType: TimeType.values[jMap["timeType"]??1],
+      bodyImage: ItemConfig.fromJson(jMap["bodyImage"]),
+      timeType: TimeType.values[jMap["timeType"] ?? 1],
       height: jMap["height"],
       width: jMap["width"],
     );
