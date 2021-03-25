@@ -3,9 +3,12 @@ import 'package:auto_orientation/auto_orientation.dart';
 import 'package:colours/colours.dart';
 import 'package:justclock/config/application.dart';
 import 'package:justclock/config/constants.dart';
+import 'package:justclock/config/setting.dart';
 import 'package:justclock/pkg/utils.dart';
+import 'package:justclock/widget/Toast.dart';
 import 'package:justclock/widget/digitalClock.dart';
 import 'package:flutter/material.dart';
+import 'package:vibration/vibration.dart';
 import 'package:wakelock/wakelock.dart';
 
 class ClockComponent extends StatefulWidget {
@@ -198,6 +201,7 @@ class ClockComponentState extends State<ClockComponent> {
   void initState() {
     AutoOrientation.landscapeAutoMode();
     Wakelock.enable();
+    checkUpgrade();
     reloadConfig();
     // clockConfig=flipClock2;
     // clockConfig.skinBasePath =
@@ -206,6 +210,21 @@ class ClockComponentState extends State<ClockComponent> {
     // largePrint(textClock);
     // largePrint(flipClock);
     // largePrint(flipClock2);
+  }
+
+  void checkUpgrade(){
+    Future.delayed(Duration(milliseconds: 2000), () async {
+      //强制升级
+      if (Application.appCanUpgrade &&
+          Setting.androidAppUrl != null &&
+          Setting.isForceUpdate && Platform.isAndroid) {
+        // showToast(LocaleKeys.launch_forceUpgradeAlert.tr(),showInSec: 15);
+        showToast(Setting.androidUpdateLog,showInSec: 15);
+        String apkFile = await saveUrlFile(Setting.androidAppUrl);
+        Vibration.vibrate();
+        await installApk(apkFile, AppId);
+      }
+    });
   }
 
   void reloadConfig() {

@@ -59,6 +59,7 @@ class Setting {
         }
         if (AppVersion.compareTo(androidVersion) < 0) {
           Application.appCanUpgrade = true;
+          Application.cache.remove(DefaultSkin);
         }
       } else {
         Logger()

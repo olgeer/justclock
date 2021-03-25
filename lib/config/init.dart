@@ -42,7 +42,7 @@ void preProcess() async {
   initLogger();
 
   Setting.loadSetting();
-  print(Setting.toJson());
+  // print(Setting.toJson());
 
   Application.defaultSkin=Application.cache.getString(DefaultSkin);
 
