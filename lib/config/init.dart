@@ -1,5 +1,4 @@
-import 'dart:io';
-import 'package:flutter/material.dart';
+
 import 'package:justclock/pkg/lamp.dart';
 import 'package:justclock/pkg/utils.dart';
 import 'package:justclock/config/application.dart';

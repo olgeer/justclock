@@ -8,6 +8,7 @@ import 'package:justclock/pkg/utils.dart';
 import 'package:justclock/widget/Toast.dart';
 import 'package:justclock/widget/digitalClock.dart';
 import 'package:flutter/material.dart';
+import 'package:log_4_dart_2/log_4_dart_2.dart';
 import 'package:vibration/vibration.dart';
 import 'package:wakelock/wakelock.dart';
 
@@ -17,6 +18,8 @@ class ClockComponent extends StatefulWidget {
 }
 
 class ClockComponentState extends State<ClockComponent> {
+  final String LOGTAG="Clock";
+  bool forceInit=false;
   DigitalClockConfig textClock = DigitalClockConfig(
     "TextClock",
     height: 100,
@@ -120,50 +123,9 @@ class ClockComponentState extends State<ClockComponent> {
       rect: Rect.fromCenter(center: Offset(238, 100), width: 45, height: 50),
     ),
   );
-  //
-  // DigitalClockConfig flipClock = DigitalClockConfig(
-  //   "DigitalFlipClock",
-  //   height: 360,
-  //   width: 640,
-  //   foregroundColor: Colors.grey,
-  //   backgroundColor: Colors.black,
-  //   backgroundImage: "bg.png",
-  //   bodyImage: "body2.png",
-  //   timeType: TimeType.h12,
-  //   skinBasePath: "DigitalFlipClock",
-  //   hourItem: ItemConfig(
-  //     style: TimeStyle.flip.index,
-  //     rect: Rect.fromCenter(center: Offset(-146, 10), width: 210, height: 233),
-  //     textStyle: TextStyle(fontSize: 180, color: Colors.white),
-  //   ),
-  //   minuteItem: ItemConfig(
-  //     style: TimeStyle.flip.index,
-  //     rect: Rect.fromCenter(center: Offset(93, 10), width: 210, height: 233),
-  //     textStyle: TextStyle(fontSize: 180, color: Colors.white),
-  //   ),
-  //   tiktokItem: ItemConfig(
-  //     style: TikTokStyle.pic.index,
-  //     rect: Rect.fromCenter(center: Offset(238, 100), width: 45, height: 50),
-  //     imgs: ["poweroff.png", "poweron.png"],
-  //   ),
-  //   h12Item: ItemConfig(
-  //     style: H12Style.pic.index,
-  //     rect: Rect.fromCenter(center: Offset(238, -78), width: 45, height: 85),
-  //     imgs: ["am.png", "pm.png"],
-  //   ),
-  //   settingItem: ItemConfig(
-  //     style: ActionStyle.icon.index,
-  //     rect: Rect.fromCenter(center: Offset(230, 20), width: 14, height: 12),
-  //     imgs: [Icons.settings.codePoint.toString()],
-  //   ),
-  //   exitItem: ItemConfig(
-  //     style: H12Style.pic.index,
-  //     rect: Rect.fromCenter(center: Offset(238, 100), width: 45, height: 50),
-  //   ),
-  // );
 
   DigitalClockConfig flipClock3 = DigitalClockConfig(
-    "DigitalFlipClock2",
+    "SimpleFlipClock",
     height: 360,
     width: 640,
     foregroundColor: Colors.grey,
@@ -175,7 +137,7 @@ class ClockComponentState extends State<ClockComponent> {
       imgs: ["body.png"],
     ),
     timeType: TimeType.h12,
-    skinBasePath: "DigitalFlipClock2",
+    skinBasePath: "SimpleFlipClock",
     hourItem: ItemConfig(
         style: TimeStyle.flip.index,
         rect: Rect.fromCenter(center: Offset(-119, 1), width: 222, height: 239),
@@ -188,7 +150,10 @@ class ClockComponentState extends State<ClockComponent> {
         imgExtname: ".png"),
     tiktokItem: null,
     h12Item: null,
-    settingItem: null,
+    settingItem: ItemConfig(
+      style: H12Style.pic.index,
+      rect: Rect.fromCenter(center: Offset(-119, 1), width: 222, height: 239),
+    ),
     exitItem: ItemConfig(
       style: H12Style.pic.index,
       rect: Rect.fromCenter(center: Offset(119, 1), width: 222, height: 239),
@@ -203,23 +168,24 @@ class ClockComponentState extends State<ClockComponent> {
     Wakelock.enable();
     checkUpgrade();
     reloadConfig();
-    // clockConfig=flipClock2;
+    // clockConfig=flipClock3;
     // clockConfig.skinBasePath =
-    // "${Application.appRootPath}/skins/${flipClock2.skinBasePath}/";
+    // "${Application.appRootPath}/skins/${flipClock3.skinBasePath}/";
 
     // largePrint(textClock);
     // largePrint(flipClock);
-    // largePrint(flipClock2);
+    // largePrint(flipClock3);
   }
 
-  void checkUpgrade(){
+  void checkUpgrade() {
     Future.delayed(Duration(milliseconds: 2000), () async {
       //强制升级
       if (Application.appCanUpgrade &&
           Setting.androidAppUrl != null &&
-          Setting.isForceUpdate && Platform.isAndroid) {
+          Setting.isForceUpdate &&
+          Platform.isAndroid) {
         // showToast(LocaleKeys.launch_forceUpgradeAlert.tr(),showInSec: 15);
-        showToast(Setting.androidUpdateLog,showInSec: 15);
+        showToast(Setting.androidUpdateLog, showInSec: 15);
         String apkFile = await saveUrlFile(Setting.androidAppUrl);
         Vibration.vibrate();
         await installApk(apkFile, AppId);
@@ -228,25 +194,33 @@ class ClockComponentState extends State<ClockComponent> {
   }
 
   void reloadConfig() {
-    if (Application.defaultSkin != null) {
+    if (Application.defaultSkin != null && !forceInit) {
       // Application.defaultSkin="DigitalFlipClock";
 
-      print("load ${Application.defaultSkin} skin");
-      File clockConfigFile = File(
-          "${Application.appRootPath}/skins/${Application.defaultSkin}/config.json");
+      Logger().debug(LOGTAG,"load ${Application.defaultSkin} skin");
+      try {
+        File clockConfigFile = File(
+            "${Application.appRootPath}/skins/${Application.defaultSkin}/config.json");
 
-      if (clockConfigFile.existsSync()) {
-        clockConfig = DigitalClockConfig.fromFile(clockConfigFile);
+        if (clockConfigFile.existsSync()) {
+          clockConfig = DigitalClockConfig.fromFile(clockConfigFile);
 
-        // clockConfig=DigitalClockConfig.fromJson(flipClock.toString());
+          // clockConfig=DigitalClockConfig.fromJson(flipClock.toString());
 
-        clockConfig.skinBasePath =
-            "${Application.appRootPath}/skins/${Application.defaultSkin}/";
-      } else
+          clockConfig.skinBasePath =
+              "${Application.appRootPath}/skins/${Application.defaultSkin}/";
+        } else
+          clockConfig = textClock;
+      } catch (e) {
+        Logger().debug(LOGTAG,e);
+        Application.cache.remove(DefaultSkin);
         clockConfig = textClock;
-    } else
+      }
+    } else {
       clockConfig = textClock;
-    print("finally use ${clockConfig.skinName} config.");
+      forceInit=false;
+    }
+    Logger().debug(LOGTAG,"finally use ${clockConfig.skinName} config.");
   }
 
   @override
@@ -261,10 +235,12 @@ class ClockComponentState extends State<ClockComponent> {
   }
 
   void onSettingChange(dynamic t) {
-    print(t);
-    setState(() {
-      reloadConfig();
-    });
+    if(t!=null) {
+      Logger().debug(LOGTAG, t);
+      setState(() {
+        reloadConfig();
+      });
+    }
   }
 
   @override
@@ -273,7 +249,7 @@ class ClockComponentState extends State<ClockComponent> {
     if (screenSize.height > screenSize.width) {
       screenSize = Size(screenSize.height, screenSize.width);
     }
-    print(screenSize);
+    Logger().debug(LOGTAG,screenSize.toString());
     return Scaffold(
       body: Container(
         height: screenSize.height,

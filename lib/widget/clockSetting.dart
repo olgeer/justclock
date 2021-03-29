@@ -21,7 +21,8 @@ class SettingComponentState extends State<SettingComponent> {
   var skinList;
   Map<String, String> skinMap;
   String skinPkgUrl;
-  TextStyle settingChapterStyle = TextStyle(fontSize: 20, color: Colors.black);
+  final Color themeColor=Colors.teal.shade300;
+  final TextStyle settingChapterStyle = TextStyle(fontSize: 20, color: Colors.teal.shade300);
 
   @override
   void initState() {
@@ -66,11 +67,11 @@ class SettingComponentState extends State<SettingComponent> {
           //extract the archive file
           final zipFile = File(skinFile);
           final destinationDir = Directory(skinDir);
-          print(zipFile.path);
-          print(destinationDir.path);
+
           try {
             await ZipFile.extractToDirectory(
                 zipFile: zipFile, destinationDir: destinationDir);
+            zipFile.deleteSync();
           } catch (e) {
             print(e);
           }
@@ -90,50 +91,9 @@ class SettingComponentState extends State<SettingComponent> {
       color: Colors.black,
       alignment: Alignment.center,
       child: ListView(children: [
-        // Card(
-        //   child: Container(
-        //     margin: EdgeInsets.all(10),
-        //     child: SmartFolder(
-        //       // onExpansionChanged: (e) {
-        //       //   unfocusAll();
-        //       // },
-        //       initiallyExpanded: true,
-        //       tileColor: Colors.grey,
-        //       child: Container(
-        //         alignment: Alignment.centerLeft,
-        //         child: ListTile(
-        //           leading: Icon(
-        //             Icons.settings,
-        //             color: Colors.black,
-        //             size: 32,
-        //           ),
-        //           dense: true,
-        //           title: Text(
-        //             "样式",
-        //             style: settingChapterStyle,
-        //           ),
-        //         ),
-        //       ),
-        //       children: [
-        //         Divider(
-        //           color: Colors.grey,
-        //           thickness: 1.0,
-        //         ),
-        //         ImageCardList(
-        //           height: 100,
-        //           width: 100,
-        //           map: {
-        //             "数字时钟": "assets/clock/sample.png",
-        //             "表盘时钟": "assets/clock/watch.jpg",
-        //           },
-        //           displayNameTag: true,
-        //         )
-        //       ],
-        //     ),
-        //   ),
-        // ),
         skinMap != null
             ? Card(
+                color: Colors.grey.shade200,
                 child: Container(
                   margin: EdgeInsets.all(10),
                   child: SmartFolder(
@@ -144,7 +104,7 @@ class SettingComponentState extends State<SettingComponent> {
                       child: ListTile(
                         leading: Icon(
                           Icons.palette,
-                          color: Colors.black,
+                          color: themeColor,
                           size: 32,
                         ),
                         dense: true,
@@ -162,6 +122,7 @@ class SettingComponentState extends State<SettingComponent> {
                       ImageCardList(
                         height: 100,
                         width: 100,
+                        titleColor: themeColor,
                         map: skinMap,
                         displayNameTag: true,
                         onTap: changeSkin,
@@ -172,6 +133,7 @@ class SettingComponentState extends State<SettingComponent> {
               )
             : Container(),
         Card(
+          color: Colors.grey.shade200,
           child: Container(
             margin: EdgeInsets.all(10),
             child: SmartFolder(
@@ -182,7 +144,7 @@ class SettingComponentState extends State<SettingComponent> {
                 child: ListTile(
                   leading: Icon(
                     Icons.settings,
-                    color: Colors.black,
+                    color: themeColor,
                     size: 32,
                   ),
                   dense: true,
@@ -198,20 +160,30 @@ class SettingComponentState extends State<SettingComponent> {
                   thickness: 1.0,
                 ),
                 ListTile(
+                    title: Text("返回"),
+                    trailing: Icon(
+                      Icons.keyboard_return,
+                      color: Colors.lightBlue,
+                      size: 32,
+                    ),
+                    onTap: () => Navigator.pop(context)),
+                ListTile(
                   title: Text("退出程序"),
                   trailing: Icon(
                     Icons.exit_to_app,
+                    color: Colors.orangeAccent.shade200,
                     size: 32,
                   ),
                   onTap: () => SystemNavigator.pop(),
                 ),
+                Divider(
+                  color: Colors.grey,
+                  thickness: 1.0,
+                ),
                 ListTile(
-                    title: Text("返回"),
-                    trailing: Icon(
-                      Icons.keyboard_return,
-                      size: 32,
-                    ),
-                    onTap: () => Navigator.pop(context))
+                  title: Text("纯粹时间"),
+                  subtitle: Text("版本：$AppVersion      开发者： olgeer@163.com"),
+                ),
               ],
             ),
           ),
