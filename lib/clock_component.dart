@@ -137,7 +137,7 @@ class ClockComponentState extends State<ClockComponent> {
       imgs: ["body.png"],
     ),
     timeType: TimeType.h12,
-    skinBasePath: "SimpleFlipClock",
+    skinBasePath: "assets:skin/SimpleFlipClock/",
     hourItem: ItemConfig(
         style: TimeStyle.flip.index,
         rect: Rect.fromCenter(center: Offset(-119, 1), width: 222, height: 239),
@@ -148,8 +148,12 @@ class ClockComponentState extends State<ClockComponent> {
         rect: Rect.fromCenter(center: Offset(119, 1), width: 222, height: 239),
         imgPrename: "d",
         imgExtname: ".png"),
+    h12Item: ItemConfig(
+      style: H12Style.pic.index,
+      rect: Rect.fromCenter(center: Offset(-200, -94), width: 45, height: 39),
+      imgs: ["am.png", "pm.png"],
+    ),
     tiktokItem: null,
-    h12Item: null,
     settingItem: ItemConfig(
       style: H12Style.pic.index,
       rect: Rect.fromCenter(center: Offset(-119, 1), width: 222, height: 239),

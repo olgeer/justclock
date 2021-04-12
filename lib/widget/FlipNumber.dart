@@ -244,6 +244,18 @@ class Pannel extends StatelessWidget {
     this.scale,
   });
 
+  Widget buildImage(String picName, {BoxFit fit = BoxFit.cover}) {
+    return picName.contains("assets:")
+        ? Image.asset(
+      picName.replaceFirst("assets:", ""),
+      fit: fit,
+    )
+        : Image.file(
+      File(picName),
+      fit: fit,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (picItem.imgs == null &&
@@ -280,8 +292,7 @@ class Pannel extends StatelessWidget {
       width: picItem.rect.width * scale,
       margin: EdgeInsets.all(0.0),
       alignment: Alignment.center,
-      child: Image.file(
-        File(picName),
+      child: buildImage(picName,
         fit: BoxFit.cover,
       ),
     );

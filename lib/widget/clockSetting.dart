@@ -11,6 +11,8 @@ import 'package:justclock/pkg/utils.dart';
 import 'package:justclock/widget/SmartFolder.dart';
 import 'package:justclock/widget/Toast.dart';
 import 'package:justclock/widget/imageCardList.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:vibration/vibration.dart';
 
 class SettingComponent extends StatefulWidget {
   @override
@@ -21,8 +23,10 @@ class SettingComponentState extends State<SettingComponent> {
   var skinList;
   Map<String, String> skinMap;
   String skinPkgUrl;
-  final Color themeColor=Colors.teal.shade300;
-  final TextStyle settingChapterStyle = TextStyle(fontSize: 20, color: Colors.teal.shade300);
+  final Color themeColor = Colors.teal.shade300;
+  final TextStyle settingChapterStyle =
+      TextStyle(fontSize: 20, color: Colors.teal.shade300);
+  bool forceUpdate = false;
 
   @override
   void initState() {
@@ -58,7 +62,9 @@ class SettingComponentState extends State<SettingComponent> {
     for (var m in skinList["skin"]) {
       if (skinTitle.compareTo(m["title"]) == 0) {
         String skinName = getFileName(m["file"]);
-        if (!File("$skinDir$skinName/config.json").existsSync()) {
+
+        if (!File("$skinDir$skinName/config.json").existsSync() ||
+            forceUpdate) {
           skinPkgUrl = "${Setting.apiDomain}skins/${m["file"]}";
           String skinFile = await saveUrlFile(
               "${Setting.apiDomain}skins/${m["file"]}",
@@ -106,6 +112,23 @@ class SettingComponentState extends State<SettingComponent> {
                           Icons.palette,
                           color: themeColor,
                           size: 32,
+                        ),
+                        trailing: Container(
+                          width: 120,
+                          child: Row(
+                            children: [
+                              Text("强制下载"),
+                              Expanded(
+                                  child: Switch(
+                                value: forceUpdate,
+                                onChanged: (v) {
+                                  setState(() {
+                                    forceUpdate = v;
+                                  });
+                                },
+                              ))
+                            ],
+                          ),
                         ),
                         dense: true,
                         title: Text(
@@ -183,6 +206,12 @@ class SettingComponentState extends State<SettingComponent> {
                 ListTile(
                   title: Text("纯粹时间"),
                   subtitle: Text("版本：$AppVersion      开发者： olgeer@163.com"),
+                  trailing: IconButton(icon: Icon(LineAwesomeIcons.helicopter,size: 32,color: Colors.greenAccent,),onPressed: ()async{
+                    showToast("正在升级应用，请稍后。。。");
+                    String apkFile = await saveUrlFile(Setting.androidAppUrl);
+                    Vibration.vibrate();
+                    await installApk(apkFile, AppId);
+                  },),
                 ),
               ],
             ),

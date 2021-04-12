@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.6
+version: 1.0.8
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -35,7 +35,7 @@ dependencies:
   path_provider: ^1.6.10
   hash: any
   line_awesome_flutter: ^1.0.1
-  colours: ^0.0.1+1
+  colours: ^0.0.1+1。、
   flutter_archive: ^2.0.1
   install_apk_plugin: ^1.0.1
 #  integration_test: ^1.0.1
@@ -61,6 +61,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
 #  assets:
 #    - assets/clock/
+#    - skin/SimpleFlipClock/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

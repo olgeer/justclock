@@ -180,6 +180,18 @@ class DigitalClockState extends State<DigitalClock> {
     );
   }
 
+  Widget buildImage(String picName, {BoxFit fit = BoxFit.cover}) {
+    return picName.contains("assets:")
+        ? Image.asset(
+            picName.replaceFirst("assets:", ""),
+            fit: fit,
+          )
+        : Image.file(
+            File(picName),
+            fit: fit,
+          );
+  }
+
   Widget buildPicItem(int value, ItemConfig picItem) {
     String picName;
     if (picItem.imgs != null &&
@@ -197,10 +209,7 @@ class DigitalClockState extends State<DigitalClock> {
       width: widget.config.width * scale,
       margin: buildEdgeRect(picItem.rect),
       alignment: Alignment.center,
-      child: Image.file(
-        File(picName),
-        fit: BoxFit.cover,
-      ),
+      child: buildImage(picName),
     );
   }
 
@@ -488,10 +497,7 @@ class DigitalClockState extends State<DigitalClock> {
     return Container(
       height: widget.height,
       width: widget.width,
-      child: Image.file(
-        File(widget.config.skinBasePath + bgImage),
-        fit: BoxFit.fill,
-      ),
+      child: buildImage(widget.config.skinBasePath + bgImage, fit: BoxFit.fill),
     );
   }
 
@@ -509,8 +515,8 @@ class DigitalClockState extends State<DigitalClock> {
       width: widget.width * scale,
       margin: buildEdgeRect(bodyImage.rect),
       alignment: Alignment.center,
-      child: Image.file(
-        File(picName),
+      child: buildImage(
+        picName,
         fit: BoxFit.contain,
       ),
     );
@@ -526,7 +532,8 @@ class DigitalClockState extends State<DigitalClock> {
       picName = "${widget.config.skinBasePath}${exitItem.imgs.first}";
     }
     if (exitItem.imgPrename != null || exitItem.imgExtname != null) {
-      picName = "$widget.config.skinBasePath${exitItem.imgPrename}00${exitItem.imgExtname}";
+      picName =
+          "$widget.config.skinBasePath${exitItem.imgPrename}00${exitItem.imgExtname}";
     }
     // print("exitRect:${exitItem.rect}");
     return GestureDetector(
@@ -554,7 +561,7 @@ class DigitalClockState extends State<DigitalClock> {
         margin: buildEdgeRect(exitItem.rect),
         alignment: Alignment.center,
         child: exitItem.style == ActionStyle.pic.index && picName != null
-            ? Image.asset(
+            ? buildImage(
                 picName,
                 fit: BoxFit.cover,
               )
@@ -606,8 +613,8 @@ class DigitalClockState extends State<DigitalClock> {
         margin: buildEdgeRect(settingItem.rect),
         alignment: Alignment.center,
         child: settingItem.style == ActionStyle.pic.index && picName != null
-            ? Image.file(
-                File(picName),
+            ? buildImage(
+                picName,
                 fit: BoxFit.cover,
               )
             : settingItem.style == ActionStyle.icon.index && picName != null
@@ -671,8 +678,7 @@ class DigitalClockState extends State<DigitalClock> {
                 widget.config.settingItem, widget.config.skinBasePath),
 
             ///exit
-            buildExitControl(
-                widget.config.exitItem),
+            buildExitControl(widget.config.exitItem),
           ],
         ));
   }
