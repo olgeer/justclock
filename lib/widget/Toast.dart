@@ -1,5 +1,5 @@
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:log_4_dart_2/log_4_dart_2.dart';
+import 'package:justclock/pkg/logger.dart';
 
 void showToast(String msg,
     {int showInSec = 2,
@@ -15,5 +15,5 @@ void showToast(String msg,
 //      backgroundColor: Colors.white,
 //      textColor: Colors.black
   );
-  if (debugMode) Logger().debug("Toast", msg);
+  if (debugMode) logger.fine(msg);
 }

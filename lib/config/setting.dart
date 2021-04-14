@@ -1,10 +1,10 @@
 import 'dart:convert';
+import 'package:justclock/pkg/logger.dart';
 import 'package:justclock/widget/Toast.dart';
 import 'package:justclock/config/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:justclock/config/application.dart';
 import 'package:justclock/pkg/utils.dart' as f;
-import 'package:log_4_dart_2/log_4_dart_2.dart';
 
 class Setting {
   static String configVersion = "1.0";
@@ -26,11 +26,11 @@ class Setting {
         Map<String, dynamic> setting = json.decode(settingStr);
 
         fromJson(setting);
-        Logger().info("Setting","load setting.json success !");
+        logger.fine("load setting.json success !");
       }
     } catch (e) {
-      Logger().error("Setting","Setting file is invaild ! [$settingStr]");
-      Logger().error("Setting",e);
+      logger.warning("Setting file is invaild ! [$settingStr]");
+      logger.warning(e);
     }finally{
       await loadSettingFromUrl(configDomain);
     }
@@ -39,7 +39,8 @@ class Setting {
   static Future loadSettingFromUrl(String url) async {
     bool configModify = false;
     try {
-      Logger().debug("Setting", url);
+      logger.fine( url);
+      logger.fine(url);
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -62,12 +63,11 @@ class Setting {
           Application.cache.remove(DefaultSkin);
         }
       } else {
-        Logger()
-            .debug("Setting", "Domain response error[${response.statusCode}]");
+        logger.fine( "Domain response error[${response.statusCode}]");
       }
       //print("Setting is ${Setting()}");
     } catch (e) {
-      Logger().error("Setting",e);
+      logger.warning(e);
     }
   }
 

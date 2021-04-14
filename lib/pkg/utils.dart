@@ -4,10 +4,11 @@ import 'dart:typed_data';
 import 'dart:math';
 import 'package:basic_utils/basic_utils.dart';
 import 'package:auto_orientation/auto_orientation.dart';
+import 'package:cron/cron.dart';
 import 'package:hash/hash.dart' as hash;
 import 'package:http/http.dart';
 import 'package:install_apk_plugin/install_apk_plugin.dart';
-import 'package:log_4_dart_2/log_4_dart_2.dart';
+import 'package:justclock/pkg/logger.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -64,7 +65,7 @@ String str2hex(String str) {
       int ch = str.codeUnitAt(i);
       hexStr += hex2char[(ch & 0xF0) >> 4];
       hexStr += hex2char[ch & 0x0F];
-//      Logger().debug("Util","hexStr:[$hexStr]");
+//      logger.fine("hexStr:[$hexStr]");
     }
   } else {
     throw new Exception("Param string is null");
@@ -182,7 +183,7 @@ void writeFileString(String filepath, String contents) async {
     writeFile.createSync(recursive: true);
   }
   writeFile.writeAsStringSync(contents);
-  Logger().debug("Util", "New file = ${writeFile.path}");
+  logger.fine( "New file = ${writeFile.path}");
 }
 
 String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
@@ -195,7 +196,7 @@ Future<String> sha512(String filePath) async {
 
   Uint8List orgBytes = orgFile.readAsBytesSync();
   Uint8List shaBytes = hash.SHA512().update(orgBytes).digest();
-  // Logger().debug("Util","sha512($filePath)=[${shaBytes.toString()}]");
+  // logger.fine("sha512($filePath)=[${shaBytes.toString()}]");
   return Uint8List2HexStr(shaBytes);
 }
 
@@ -213,7 +214,7 @@ List<String> objectListToStringList(List<dynamic> listObject) {
 String md5(String str) {
   if (str == null) return null;
   Uint8List md5Bytes = hash.MD5().update(str.codeUnits).digest();
-  //Logger().debug("Util","md5($str)=${md5Bytes}");
+  //logger.fine("md5($str)=${md5Bytes}");
   return Uint8List2HexStr(md5Bytes);
 }
 
@@ -248,10 +249,10 @@ void largeDebug(String logTag, dynamic msg) {
 
   for (String oneLine in str.split("\n")) {
     while (oneLine.length > maxPrintLenght) {
-      Logger().debug(logTag, oneLine.substring(0, maxPrintLenght));
+      logger.fine( oneLine.substring(0, maxPrintLenght));
       oneLine = oneLine.substring(maxPrintLenght);
     }
-    Logger().debug(logTag, oneLine);
+    logger.fine( oneLine);
   }
 }
 
@@ -356,10 +357,10 @@ String read4File(String filePath) {
 
 bool fileRename(String beforeName, String afterName) {
   File beforeFile = File(beforeName);
-  // Logger().debug("Util", "Ready rename\n$beforeName\n to \n$afterName");
+  // logger.fine( "Ready rename\n$beforeName\n to \n$afterName");
   if (beforeFile.existsSync()) {
     beforeFile.renameSync(afterName);
-    Logger().debug("Util", "Renamed\n$beforeName\n to \n$afterName");
+    logger.fine( "Renamed\n$beforeName\n to \n$afterName");
     return true;
   }
   return false;

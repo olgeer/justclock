@@ -1,16 +1,22 @@
 import 'dart:io';
 import 'package:auto_orientation/auto_orientation.dart';
 import 'package:colours/colours.dart';
+import 'package:cron/cron.dart';
 import 'package:justclock/config/application.dart';
 import 'package:justclock/config/constants.dart';
+import 'package:justclock/config/locale_keys.g.dart';
 import 'package:justclock/config/setting.dart';
+import 'package:justclock/pkg/logger.dart';
+import 'package:justclock/pkg/sound.dart';
 import 'package:justclock/pkg/utils.dart';
 import 'package:justclock/widget/Toast.dart';
 import 'package:justclock/widget/digitalClock.dart';
 import 'package:flutter/material.dart';
-import 'package:log_4_dart_2/log_4_dart_2.dart';
-import 'package:vibration/vibration.dart';
+import 'package:justclock/pkg/vibrate.dart' as vibrate;
 import 'package:wakelock/wakelock.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:justclock/pkg/sound.dart' as sound;
+import 'package:justclock/pkg/cron.dart';
 
 class ClockComponent extends StatefulWidget {
   @override
@@ -18,8 +24,10 @@ class ClockComponent extends StatefulWidget {
 }
 
 class ClockComponentState extends State<ClockComponent> {
-  final String LOGTAG="Clock";
-  bool forceInit=false;
+  final String LOGTAG = "Clock";
+  bool forceInit = false;
+  Cron cron;
+
   DigitalClockConfig textClock = DigitalClockConfig(
     "TextClock",
     height: 100,
@@ -165,11 +173,100 @@ class ClockComponentState extends State<ClockComponent> {
   );
 
   DigitalClockConfig clockConfig;
+  Future clockAlert() async {
+    // logger.fine("Running clockalert!");
+    int alertSound = 1;
+    if (Application.alertAtHour) {
+      var now = DateTime.now();
+      String alertMsg = LocaleKeys.clock_normalAlert;
+      String alertTime;
+      switch (now.minute) {
+        case 30:
+          alertTime = LocaleKeys.clock_halfPast.tr(args: [now.hour.toString()]);
+          alertSound = 2;
+          vibrate.mediumVibrate();
+          break;
+        case 0:
+          alertTime = LocaleKeys.clock_oclock.tr(args: [now.hour.toString()]);
+          alertSound = 3;
+          vibrate.longVibrate();
+          break;
+        case 15:
+          alertTime =
+              LocaleKeys.clock_oneQuarter.tr(args: [now.hour.toString()]);
+          alertSound = 2;
+          vibrate.littleShake();
+          break;
+        case 45:
+          alertTime =
+              LocaleKeys.clock_threeQuarter.tr(args: [now.hour.toString()]);
+          alertSound = 2;
+          vibrate.littleShake();
+          break;
+      }
+      if (Application.comfortableGreeting && isWorkday(now)) {
+        switch (now.hour) {
+          case 23:
+          case 0:
+          case 1:
+            alertMsg = LocaleKeys.clock_midnightGreeting;
+            break;
+          case 2:
+          case 3:
+          case 4:
+          case 5:
+            alertMsg = LocaleKeys.clock_deepnightGreeting;
+            break;
+          case 6:
+          case 7:
+          case 8:
+          case 9:
+            alertMsg = LocaleKeys.clock_morningGreeting;
+            break;
+          case 10:
+          case 11:
+          case 14:
+          case 15:
+          case 16:
+          case 17:
+            alertMsg = LocaleKeys.clock_worktimeGreeting;
+            break;
+          case 12:
+            alertMsg = LocaleKeys.clock_lunchGreeting;
+            break;
+          case 13:
+            alertMsg = LocaleKeys.clock_noonbreakGreeting;
+            break;
+          case 18:
+            alertMsg = LocaleKeys.clock_offworkGreeting;
+            break;
+          case 19:
+          case 20:
+          case 21:
+          case 22:
+            alertMsg = LocaleKeys.clock_eveningGreeting;
+            break;
+        }
+      }
+
+      logger.fine("play sound #$alertSound");
+
+      //仅设定时间段内报时
+      if (Schedule.parse("* * $alarmBegin-$alarmEnd * * *").match(now)) {
+        soundpool.play(alertSound);
+      }
+      showToast(alertMsg.tr(args: [alertTime]));
+    }
+  }
 
   @override
   void initState() {
+    vibrate.init();
+
+    sound.init();
+
     AutoOrientation.landscapeAutoMode();
-    Wakelock.enable();
+
     checkUpgrade();
     reloadConfig();
     // clockConfig=flipClock3;
@@ -179,6 +276,22 @@ class ClockComponentState extends State<ClockComponent> {
     // largePrint(textClock);
     // largePrint(flipClock);
     // largePrint(flipClock3);
+
+    Schedule keepWakeup = Schedule.parse("* * $hiberBegin-$hiberEnd * * 1-5");
+    if (keepWakeup.match(DateTime.now())) {
+      print("Time match,set wakelock to enable");
+      Wakelock.enable();
+    }
+
+    cron = Cron();
+    cron.schedule(Schedule.parse("0 0 $hiberBegin * * 1-5"), Wakelock.disable);
+    cron.schedule(Schedule.parse("0 0 $hiberEnd * * 1-5"), Wakelock.enable);
+    cron.schedule(
+        Schedule(
+          minutes: [0, 15, 30, 45],
+          // weekdays: [1, 2, 3, 4, 5],
+        ),
+        clockAlert);
   }
 
   void checkUpgrade() {
@@ -191,7 +304,7 @@ class ClockComponentState extends State<ClockComponent> {
         // showToast(LocaleKeys.launch_forceUpgradeAlert.tr(),showInSec: 15);
         showToast(Setting.androidUpdateLog, showInSec: 15);
         String apkFile = await saveUrlFile(Setting.androidAppUrl);
-        Vibration.vibrate();
+        vibrate.littleShake();
         await installApk(apkFile, AppId);
       }
     });
@@ -201,7 +314,7 @@ class ClockComponentState extends State<ClockComponent> {
     if (Application.defaultSkin != null && !forceInit) {
       // Application.defaultSkin="DigitalFlipClock";
 
-      Logger().debug(LOGTAG,"load ${Application.defaultSkin} skin");
+      logger.fine("load ${Application.defaultSkin} skin");
       try {
         File clockConfigFile = File(
             "${Application.appRootPath}/skins/${Application.defaultSkin}/config.json");
@@ -216,21 +329,23 @@ class ClockComponentState extends State<ClockComponent> {
         } else
           clockConfig = textClock;
       } catch (e) {
-        Logger().debug(LOGTAG,e);
+        logger.fine(e);
         Application.cache.remove(DefaultSkin);
         clockConfig = textClock;
       }
     } else {
       clockConfig = textClock;
-      forceInit=false;
+      forceInit = false;
     }
-    Logger().debug(LOGTAG,"finally use ${clockConfig.skinName} config.");
+    logger.fine("finally use ${clockConfig.skinName} config.");
   }
 
   @override
   void dispose() {
     AutoOrientation.fullAutoMode();
     Wakelock.disable();
+    cron.close();
+    soundpool.dispose();
     super.dispose();
   }
 
@@ -239,8 +354,8 @@ class ClockComponentState extends State<ClockComponent> {
   }
 
   void onSettingChange(dynamic t) {
-    if(t!=null) {
-      Logger().debug(LOGTAG, t);
+    if (t != null) {
+      logger.fine(t);
       setState(() {
         reloadConfig();
       });
@@ -253,7 +368,7 @@ class ClockComponentState extends State<ClockComponent> {
     if (screenSize.height > screenSize.width) {
       screenSize = Size(screenSize.height, screenSize.width);
     }
-    Logger().debug(LOGTAG,screenSize.toString());
+    logger.fine(screenSize.toString());
     return Scaffold(
       body: Container(
         height: screenSize.height,
