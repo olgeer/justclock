@@ -12,7 +12,7 @@ Soundpool soundpool;
 
 void init()async {
   soundpool=Soundpool(maxStreams: 1,);
-  print(await soundpool.load(await rootBundle.load("assets/voices/${effectVoice["玻璃撞击声"]}")));
-  print(await soundpool.load(await rootBundle.load("assets/voices/${effectVoice["短促喇叭声"]}")));
-  print(await soundpool.load(await rootBundle.load("assets/voices/${effectVoice["座钟报时"]}")));
+  // print(await soundpool.load(await rootBundle.load("assets/voices/${effectVoice["玻璃撞击声"]}")));
+  // print(await soundpool.load(await rootBundle.load("assets/voices/${effectVoice["短促喇叭声"]}")));
+  // print(await soundpool.load(await rootBundle.load("assets/voices/${effectVoice["座钟报时"]}")));
 }

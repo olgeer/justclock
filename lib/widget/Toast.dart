@@ -15,5 +15,5 @@ void showToast(String msg,
 //      backgroundColor: Colors.white,
 //      textColor: Colors.black
   );
-  if (debugMode) logger.fine(msg);
+  if (debugMode)logger.fine(msg);
 }

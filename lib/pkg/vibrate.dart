@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:vibration/vibration.dart';
 
 bool hasVibrator, hasCustomVibrationsSupport, hasAmplitudeControl;
+bool enableVibrate=true;
 
 void init() async {
   //获取震动器信息
@@ -16,7 +17,7 @@ void vibrateCustom(
     int amplitude = -1,
     int repeat = -1,
     List<int> intensities = const []}) {
-  if (hasVibrator) {
+  if (hasVibrator && enableVibrate) {
     if (hasCustomVibrationsSupport) {
       if (hasAmplitudeControl) {
         Vibration.vibrate(
