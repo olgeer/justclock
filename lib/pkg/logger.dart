@@ -2,7 +2,7 @@
 import 'package:logging/logging.dart';
 import 'package:console/console.dart';
 
-final logger = Logger('JustClock');
+final Logger logger = Logger('JustClock');
 void initLogger(){
   logger.onRecord.listen((event) {
     String color="{@yellow}";
@@ -19,7 +19,7 @@ void initLogger(){
         color="{@blue}";
         break;
       case 900:
-        color="{@orange}";
+        color="{@magenta}";
         break;
       case 1000:
         color="{@cyan}";
@@ -33,3 +33,22 @@ void initLogger(){
     // log("${DateTime.now().toString()} -- ${event.level.toString()} : ${event.message}",time:DateTime.now(),name: event.loggerName,level: 0);
   });
 }
+
+// final Map<String, Color> _COLORS = {
+//   'black': Color(0),
+//   'gray': Color(0, bright: true),
+//   'dark_red': Color(1),
+//   'red': Color(1, bright: true),
+//   'green': Color(2),
+//   'lime': Color(2, bright: true),
+//   'gold': Color(3),
+//   'yellow': Color(3, bright: true),
+//   'dark_blue': Color(4),
+//   'blue': Color(4, bright: true),
+//   'magenta': Color(5),
+//   'light_magenta': Color(5, bright: true),
+//   'cyan': Color(6),
+//   'light_cyan': Color(6, bright: true),
+//   'light_gray': Color(7),
+//   'white': Color(7, bright: true)
+// };

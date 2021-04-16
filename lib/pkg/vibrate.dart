@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'package:vibration/vibration.dart';
 
-bool hasVibrator, hasCustomVibrationsSupport, hasAmplitudeControl;
-bool enableVibrate=true;
+bool hasVibrator=false, hasCustomVibrationsSupport=false, hasAmplitudeControl=false;
+bool enableVibrate=false;
 
 void init() async {
   //获取震动器信息
   hasVibrator = await Vibration.hasVibrator();
   hasAmplitudeControl = await Vibration.hasAmplitudeControl();
   hasCustomVibrationsSupport = await Vibration.hasCustomVibrationsSupport();
+  enableVibrate=true;
 }
 
 void vibrateCustom(

@@ -845,7 +845,7 @@ class DigitalClockConfig {
 
   static DigitalClockConfig fromJson(String jsonStr) {
     if (jsonStr == null) return null;
-    largePrint(jsonStr);
+    // largePrint(jsonStr);
 
     var jMap = jsonDecode(jsonStr);
     return DigitalClockConfig(

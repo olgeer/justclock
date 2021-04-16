@@ -23,7 +23,7 @@ class ClockComponent extends StatefulWidget {
   ClockComponentState createState() => ClockComponentState();
 }
 
-class ClockComponentState extends State<ClockComponent> {
+class ClockComponentState extends State<ClockComponent> with WidgetsBindingObserver{
   final String LOGTAG = "Clock";
   bool forceInit = false;
   AlarmClock myClock;
@@ -262,6 +262,7 @@ class ClockComponentState extends State<ClockComponent> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);  //添加观察者
     // vibrate.init();
     //
     // sound.init();
@@ -295,12 +296,12 @@ class ClockComponentState extends State<ClockComponent> {
     //     clockAlert);
     myClock = AlarmClock(
         newSchedule: Schedule(
-          minutes: [0, 15, 30, 45,09],
+          minutes: [0, 15, 30, 45,],
         ),
         noSoundSchedule: Schedule(hours: [23,0,1,2,3,4,5,6]),
         noWakeLockSchedule: Schedule(hours: "8-15", weekdays: "1-5"),
-        sleepEnableAction: () => Wakelock.disable(),
-        sleepDisableAction: () => Wakelock.enable());
+        sleepEnableAction: () => logger.fine("sleepEnableAction() run ${Wakelock.disable()}"),
+        sleepDisableAction: () => logger.fine("sleepDisableAction() run ${Wakelock.enable()}"));
     myClock.addSpecialSchedule(Schedule(hours: "2-5"), "已经 {} 了，熬夜看书不是个好习惯，赶紧睡吧");
     myClock.addSpecialSchedule(Schedule(hours: [23,0,1]), "夜猫子，不要看太晚了，已经 {} 了");
     myClock.addSpecialSchedule(Schedule(hours: "6-8"), "早起读书精神爽，现在是 {} 了");
@@ -311,6 +312,12 @@ class ClockComponentState extends State<ClockComponent> {
     myClock.addSpecialSchedule(Schedule(hours: 18), "现在是 {}，总算下班了");
     myClock.addSpecialSchedule(Schedule(hours: "19-22"), "只要不加班，快活到天亮，现在是 {}");
     myClock.addSpecialSchedule(Schedule(days: 15,months: 4), "今天是闹钟模块诞生的日子，值得纪念");
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    logger.fine("didChangeAppLifecycleState=[$state]");
+    super.didChangeAppLifecycleState(state);
   }
 
   void checkUpgrade() {
@@ -386,7 +393,7 @@ class ClockComponentState extends State<ClockComponent> {
     if (screenSize.height > screenSize.width) {
       screenSize = Size(screenSize.height, screenSize.width);
     }
-    logger.fine(screenSize.toString());
+    logger.fine("Screen ${screenSize.toString()}");
     return Scaffold(
       body: Container(
         height: screenSize.height,

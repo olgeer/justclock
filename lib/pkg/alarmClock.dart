@@ -1,5 +1,6 @@
 import 'package:cron/cron.dart';
 import 'package:flutter/services.dart';
+import 'package:justclock/pkg/logger.dart';
 import 'package:justclock/pkg/sound.dart' as sound;
 import 'package:justclock/pkg/vibrate.dart' as vibrate;
 import 'package:justclock/widget/Toast.dart';
@@ -80,13 +81,34 @@ class AlarmClock {
       if (noWakeLockSchedule is String)
         sleepSchedule = Schedule.parse(noWakeLockSchedule);
     }
-    if (!(sleepSchedule?.match(DateTime.now()) ?? true)) sleepEnableAction();
+    if (sleepSchedule?.match(DateTime.now()) == false){
+      logger.fine("do wakelock");
+      sleepDisableAction();
+    }else{
+      logger.fine("do not wakelock");
+      sleepEnableAction();
+    }
 
     if (enableVibrate) vibrate.init();
-
+    
     if (enableAlarmSound) sound.init();
 
-    init();
+    initAsync();
+  }
+
+  void initAsync() async {
+    if (enableAlarmSound) {
+      oclockSoundIdx =
+      await sound.loadSound(oclockAlarmSound ?? "assets/voices/座钟报时.mp3");
+      halfSoundIdx =
+      await sound.loadSound(halfAlarmSound ?? "assets/voices/短促欢愉.mp3");
+      quarterSoundIdx =
+      await sound.loadSound(quarterAlarmSound ?? "assets/voices/钟琴颤音.mp3");
+    }
+
+    // Uri uriRes=Uri.parse("http://olgeer.3322.org:8888/justclock/iphone.mp3");
+    // logger.severe(uriRes.origin+uriRes.path);
+    // await sound.play(await sound.loadSound(uriRes));
   }
 
   set newAlarmAction(actionCall action) {
@@ -111,7 +133,7 @@ class AlarmClock {
 
   String get alarmTemplate{
     String alarmTmp=normalAlarmMessageTemplate;
-    if(!specialAlarms.isEmpty){
+    if(specialAlarms.isNotEmpty){
       DateTime now=DateTime.now();
 
       specialAlarms.forEach((key, value) {
@@ -131,75 +153,58 @@ class AlarmClock {
 
   void clearSpecialSchedule()=>specialAlarms.clear();
 
-  Future<int> loadSound(dynamic soundMedia) async {
-    if (sound.soundpool == null) sound.init();
-    if (soundMedia is ByteData) return await sound.soundpool.load(soundMedia);
-    if (soundMedia is Uri)
-      return await sound.soundpool.loadUri(soundMedia.path);
-    if (soundMedia is String)
-      return await sound.soundpool.load(await rootBundle.load(soundMedia));
-    return -1;
-  }
-
-  void init() async {
-    if (enableAlarmSound) {
-      oclockSoundIdx =
-          await loadSound(oclockAlarmSound ?? "assets/voices/座钟报时.mp3");
-      halfSoundIdx =
-          await loadSound(halfAlarmSound ?? "assets/voices/玻璃撞击声.mp3");
-      quarterSoundIdx =
-          await loadSound(quarterAlarmSound ?? "assets/voices/短促喇叭声.mp3");
-    }
-    vibrate.enableVibrate = enableVibrate;
-  }
-
   void dispose() {
     sound.soundpool.dispose();
+    sleepEnableAction();
     alarmTask.cancel();
   }
 
-  void playSound(int soundIdx) {
+  void playSound(int soundIdx,{bool repeat,Duration duration}) {
     //仅设定时间段内报时
     if (!(slientSchedule?.match(DateTime.now()) ?? false)) {
-      sound.soundpool.play(soundIdx);
+      sound.play(soundIdx,repeat: repeat??duration!=null,duration: duration);
     }
   }
 
   void alarm() {
     var now = DateTime.now();
+    sleepDisableAction();
     String alertMsg = this.alarmTemplate;
     String alertTime;
     switch (now.minute) {
       case 30:
         alertTime = halfPastTemplate.tr(args: [now.hour.toString()]);
-        playSound(halfSoundIdx);
+        playSound(halfSoundIdx,repeat: true,duration:Duration(seconds: 10));
         vibrate.mediumVibrate();
         break;
       case 0:
         alertTime = oclockTemplate.tr(args: [now.hour.toString()]);
-        playSound(oclockSoundIdx);
+        playSound(oclockSoundIdx,repeat: true,duration:Duration(seconds: 10));
         vibrate.longVibrate();
         break;
       case 15:
         alertTime = aQuarterTemplate.tr(args: [now.hour.toString()]);
-        playSound(quarterSoundIdx);
+        playSound(quarterSoundIdx,repeat: true,duration:Duration(seconds: 10));
         vibrate.littleShake();
         break;
       case 45:
         alertTime = threeQuarterTemplate.tr(args: [now.hour.toString()]);
-        playSound(quarterSoundIdx);
+        playSound(quarterSoundIdx,repeat: true,duration:Duration(seconds: 10));
         vibrate.littleShake();
         break;
       default:
         alertTime =
             anytimeTemplate.tr(args: [now.hour.toString(), now.minute.toString()]);
+        playSound(quarterSoundIdx);
+        break;
     }
 
     //按休眠计划改变激活锁定状态
-    if (!(sleepSchedule?.match(now) ?? true))
-      sleepEnableAction();
-    else
+    if (sleepSchedule?.match(now)==false) {
       sleepDisableAction();
+    } else {
+      sleepEnableAction();
+    }
 
     showToast(alertMsg.tr(args: [alertTime]));
   }
