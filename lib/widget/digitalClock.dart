@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:justclock/config/application.dart';
+import 'package:justclock/pkg/logger.dart';
 import 'package:justclock/widget/FlipNumber.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,13 +15,13 @@ class DigitalClock extends StatefulWidget {
   final double height;
   final double width;
   DigitalClockConfig config;
-  eventCall onSettingChange;
+  eventCall onClockEvent;
 
   DigitalClock({
     this.height = 100,
     this.width = 200,
     @required this.config,
-    this.onSettingChange,
+    this.onClockEvent,
   })  : assert(config != null),
         super();
 
@@ -30,6 +32,7 @@ class DigitalClock extends StatefulWidget {
 class DigitalClockState extends State<DigitalClock> {
   int hours, minutes, years, months, days, weekday;
   int h12 = 0, tk = 0;
+  bool isSlient = false;
   String currentSkinName;
   String skinBasePath;
   Timer clockTimer;
@@ -141,9 +144,11 @@ class DigitalClockState extends State<DigitalClock> {
     DateTime now = DateTime.now();
 
     if (getHour(now.hour) != hours && hourFlipNumber != null) {
+      hourFlipNumber.currentValue = now.hour;
       hourFlipNumber?.controller?.forward();
     }
     if (now.minute != minutes && minuteFlipNumber != null) {
+      minuteFlipNumber.currentValue = now.minute;
       minuteFlipNumber?.controller?.forward();
     }
 
@@ -604,7 +609,7 @@ class DigitalClockState extends State<DigitalClock> {
           return SettingComponent();
         },
       )).then((t) {
-        if (widget.onSettingChange != null) widget.onSettingChange(t);
+        if (widget.onClockEvent != null) widget.onClockEvent(t);
       }),
       child: Container(
         color: Colors.transparent,
@@ -623,6 +628,64 @@ class DigitalClockState extends State<DigitalClock> {
                         fontFamily: "MaterialIcons"),
                     color: widget.config.foregroundColor,
                     size: 12 * scale,
+                  )
+                : nullWidget,
+      ),
+    );
+  }
+
+  Widget buildSlientControl(ItemConfig slientItem, String basePath) {
+    if (slientItem == null) return nullWidget;
+
+    String picName;
+    if (slientItem.style == ActionStyle.pic.index) {
+      if (slientItem.imgs != null && slientItem.imgs.length > 1) {
+        if (isSlient)
+          picName = basePath ?? "" + slientItem.imgs[0];
+        else
+          picName = basePath ?? "" + slientItem.imgs[1];
+      }
+      if (slientItem.imgPrename != null || slientItem.imgExtname != null) {
+        if (isSlient)
+          picName =
+              "$basePath${slientItem.imgPrename}00${slientItem.imgExtname}";
+        else
+          picName =
+              "$basePath${slientItem.imgPrename}01${slientItem.imgExtname}";
+      }
+    }
+    if (slientItem.style == ActionStyle.icon.index) {
+      if (slientItem.imgs != null && slientItem.imgs.length > 1) {
+        if (isSlient)
+          picName = slientItem.imgs[0];
+        else
+          picName = slientItem.imgs[1];
+      }
+    }
+    // print("skinRect:${skinItem.rect}");
+    return GestureDetector(
+      onTap: ()=>
+        setState(() {
+          isSlient = !isSlient;
+          if(widget.onClockEvent!=null)widget.onClockEvent(ClockEvent(ClockEventType.slientChange,value: isSlient));
+        }),
+      child: Container(
+        color: Colors.transparent,
+        height: widget.config.height * scale,
+        width: widget.config.width * scale,
+        margin: buildEdgeRect(slientItem.rect),
+        alignment: Alignment.center,
+        child: slientItem.style == ActionStyle.pic.index && picName != null
+            ? buildImage(
+                picName,
+                fit: BoxFit.cover,
+              )
+            : slientItem.style == ActionStyle.icon.index && picName != null
+                ? Icon(
+                    new IconData(int.parse(picName),
+                        fontFamily: "MaterialIcons"),
+                    color: widget.config.foregroundColor,
+                    size: slientItem.rect.height * scale,
                   )
                 : nullWidget,
       ),
@@ -679,6 +742,9 @@ class DigitalClockState extends State<DigitalClock> {
 
             ///exit
             buildExitControl(widget.config.exitItem),
+
+            ///slient
+            buildSlientControl(widget.config.slientItem, widget.config.skinBasePath),
           ],
         ));
   }
@@ -692,6 +758,13 @@ enum H12 { am, pm }
 enum H12Style { text, pic, icon }
 enum TikTokStyle { text, pic, icon }
 enum ActionStyle { text, pic, icon, empty }
+
+enum ClockEventType {slientChange,slientScheduleChange,sleepScheduleChange,skinChange}
+class ClockEvent{
+  ClockEventType clockEventType;
+  dynamic value;
+  ClockEvent(this.clockEventType,{this.value});
+}
 
 class ItemConfig {
   int style; //样式的index值，根据item的不同有不同的对应关系
@@ -804,6 +877,9 @@ class DigitalClockConfig {
   ///返回/退出控制
   ItemConfig exitItem;
 
+  ///静音控制
+  ItemConfig slientItem;
+
   ///背景设置
   Color backgroundColor;
   String backgroundImage;
@@ -831,6 +907,7 @@ class DigitalClockConfig {
       this.tiktokItem,
       this.settingItem,
       this.exitItem,
+      this.slientItem,
       this.backgroundColor,
       this.backgroundImage,
       this.foregroundColor,
@@ -861,6 +938,7 @@ class DigitalClockConfig {
       tiktokItem: ItemConfig.fromJson(jMap["tiktokItem"]),
       settingItem: ItemConfig.fromJson(jMap["settingItem"]),
       exitItem: ItemConfig.fromJson(jMap["exitItem"]),
+      slientItem: ItemConfig.fromJson(jMap["slientItem"]),
       backgroundColor: Color(jMap["backgroundColor"] ?? 0x00000000),
       foregroundColor: Color(jMap["foregroundColor"] ?? 0x00ffffff),
       backgroundImage: jMap["backgroundImage"],
@@ -886,6 +964,7 @@ class DigitalClockConfig {
       "tiktokItem": tiktokItem,
       "settingItem": settingItem,
       "exitItem": exitItem,
+      "slientItem": slientItem,
       "backgroundColor": backgroundColor?.value,
       "foregroundColor": foregroundColor?.value,
       "backgroundImage": backgroundImage,

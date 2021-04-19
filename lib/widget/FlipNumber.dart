@@ -25,6 +25,8 @@ class FlipNumber extends StatefulWidget {
     this.currentValue = 0,
   });
 
+  void test(){}
+
   @override
   State<StatefulWidget> createState() {
     return _FlipNumberState();
@@ -50,6 +52,7 @@ class _FlipNumberState extends State<FlipNumber>
   void initState() {
     _isPositiveSequence = widget.isPositiveSequence;
     calcValue(initValue: widget.currentValue ?? widget.min);
+    widget.currentValue=null;
 
     // 5 秒动画，利用 reset、forward 重复执行
     _controller = AnimationController(
@@ -92,7 +95,7 @@ class _FlipNumberState extends State<FlipNumber>
     // 动画完成时，添加数字检测，实现动画
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        calcValue();
+        calcValue(initValue:widget.currentValue);
         // 重置动画
         _controller.reset();
         // 重新开启动画

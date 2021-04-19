@@ -14,6 +14,7 @@ import 'package:justclock/widget/Toast.dart';
 import 'package:justclock/widget/digitalClock.dart';
 import 'package:flutter/material.dart';
 import 'package:justclock/pkg/vibrate.dart' as vibrate;
+import 'package:time_range_picker/time_range_picker.dart';
 import 'package:wakelock/wakelock.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:justclock/pkg/sound.dart' as sound;
@@ -171,6 +172,11 @@ class ClockComponentState extends State<ClockComponent> with WidgetsBindingObser
       style: H12Style.pic.index,
       rect: Rect.fromCenter(center: Offset(119, 1), width: 222, height: 239),
     ),
+    slientItem: ItemConfig(
+      style: ActionStyle.icon.index,
+      rect: Rect.fromCenter(center: Offset(250, -110), width: 32, height: 32),
+      imgs: [Icons.notifications_off.codePoint.toString(),Icons.notifications.codePoint.toString()],
+    ),
   );
 
   DigitalClockConfig clockConfig;
@@ -271,6 +277,7 @@ class ClockComponentState extends State<ClockComponent> with WidgetsBindingObser
 
     checkUpgrade();
     reloadConfig();
+    // clockConfig=textClock;
     // clockConfig=flipClock3;
     // clockConfig.skinBasePath =
     // "${Application.appRootPath}/skins/${flipClock3.skinBasePath}/";
@@ -378,12 +385,23 @@ class ClockComponentState extends State<ClockComponent> with WidgetsBindingObser
     Application.cache.setString(DefaultSkin, skinName);
   }
 
-  void onSettingChange(dynamic t) {
-    if (t != null) {
-      logger.fine(t);
-      setState(() {
-        reloadConfig();
-      });
+  void onClockEvent(dynamic t) {
+    if(t is ClockEvent) {
+      if (t.clockEventType == ClockEventType.skinChange) {
+        logger.fine(t.value);
+        setState(() {
+          reloadConfig();
+        });
+      }
+      if (t.clockEventType == ClockEventType.sleepScheduleChange) {
+        myClock.noWakeLockSchedule = t.value;
+      }
+      if (t.clockEventType == ClockEventType.slientScheduleChange) {
+        myClock.noSoundSchedule = t.value;
+      }
+      if (t.clockEventType == ClockEventType.slientChange) {
+        myClock.setSlient = t.value;
+      }
     }
   }
 
@@ -404,7 +422,7 @@ class ClockComponentState extends State<ClockComponent> with WidgetsBindingObser
           height: screenSize.height,
           width: screenSize.width,
           config: clockConfig,
-          onSettingChange: onSettingChange,
+          onClockEvent: onClockEvent,
         ),
       ),
     );

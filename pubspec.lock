@@ -448,6 +448,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.2.19"
+  time_range_picker:
+    dependency: "direct main"
+    description:
+      name: time_range_picker
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.0.1"
   tinycolor:
     dependency: transitive
     description:

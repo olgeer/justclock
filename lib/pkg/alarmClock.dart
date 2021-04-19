@@ -1,5 +1,4 @@
 import 'package:cron/cron.dart';
-import 'package:flutter/services.dart';
 import 'package:justclock/pkg/logger.dart';
 import 'package:justclock/pkg/sound.dart' as sound;
 import 'package:justclock/pkg/vibrate.dart' as vibrate;
@@ -38,6 +37,9 @@ class AlarmClock {
   ///整点报时音文件
   String oclockAlarmSound;
   int oclockSoundIdx;
+
+  ///静音开关
+  bool isSlient=false;
 
   String normalAlarmMessageTemplate = "现在是 {}";
   String anytimeTemplate = "{}点{}分";
@@ -123,6 +125,11 @@ class AlarmClock {
     alarmTask = cron.schedule(alarmSchedule, alarmAction);
   }
 
+  set setSlient(bool b){
+    isSlient=b;
+    logger.fine("isSlient is $b");
+  }
+
   Schedule get newSchedule => alarmSchedule;
 
   set noSoundSchedule(Schedule s) => slientSchedule = s;
@@ -161,7 +168,7 @@ class AlarmClock {
 
   void playSound(int soundIdx,{bool repeat,Duration duration}) {
     //仅设定时间段内报时
-    if (!(slientSchedule?.match(DateTime.now()) ?? false)) {
+    if (!(slientSchedule?.match(DateTime.now()) ?? false) && !isSlient) {
       sound.play(soundIdx,repeat: repeat??duration!=null,duration: duration);
     }
   }
@@ -174,7 +181,7 @@ class AlarmClock {
     switch (now.minute) {
       case 30:
         alertTime = halfPastTemplate.tr(args: [now.hour.toString()]);
-        playSound(halfSoundIdx,repeat: true,duration:Duration(seconds: 10));
+        playSound(halfSoundIdx,repeat: true,duration:Duration(seconds: 3));
         vibrate.mediumVibrate();
         break;
       case 0:
@@ -184,12 +191,12 @@ class AlarmClock {
         break;
       case 15:
         alertTime = aQuarterTemplate.tr(args: [now.hour.toString()]);
-        playSound(quarterSoundIdx,repeat: true,duration:Duration(seconds: 10));
+        playSound(quarterSoundIdx,repeat: true,duration:Duration(seconds: 2));
         vibrate.littleShake();
         break;
       case 45:
         alertTime = threeQuarterTemplate.tr(args: [now.hour.toString()]);
-        playSound(quarterSoundIdx,repeat: true,duration:Duration(seconds: 10));
+        playSound(quarterSoundIdx,repeat: true,duration:Duration(seconds: 2));
         vibrate.littleShake();
         break;
       default:
