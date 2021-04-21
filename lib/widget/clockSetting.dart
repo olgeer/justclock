@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cron/cron.dart';
+import 'package:digital_clock/digital_clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_archive/flutter_archive.dart';
@@ -11,7 +12,6 @@ import 'package:justclock/config/setting.dart';
 import 'package:justclock/pkg/utils.dart';
 import 'package:justclock/widget/SmartFolder.dart';
 import 'package:justclock/widget/Toast.dart';
-import 'package:justclock/widget/digitalClock.dart';
 import 'package:justclock/widget/imageCardList.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:time_range_picker/time_range_picker.dart';

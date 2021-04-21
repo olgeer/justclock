@@ -1,23 +1,18 @@
 import 'dart:io';
+import 'package:digital_clock/digital_clock.dart';
 import 'package:auto_orientation/auto_orientation.dart';
 import 'package:colours/colours.dart';
 import 'package:cron/cron.dart';
+import 'package:flutter/services.dart';
 import 'package:justclock/config/application.dart';
 import 'package:justclock/config/constants.dart';
-import 'package:justclock/config/locale_keys.g.dart';
 import 'package:justclock/config/setting.dart';
-import 'package:justclock/pkg/alarmClock.dart';
 import 'package:justclock/pkg/logger.dart';
-import 'package:justclock/pkg/sound.dart';
 import 'package:justclock/pkg/utils.dart';
 import 'package:justclock/widget/Toast.dart';
-import 'package:justclock/widget/digitalClock.dart';
+import 'package:justclock/widget/clockSetting.dart';
 import 'package:flutter/material.dart';
-import 'package:justclock/pkg/vibrate.dart' as vibrate;
-import 'package:time_range_picker/time_range_picker.dart';
 import 'package:wakelock/wakelock.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:justclock/pkg/sound.dart' as sound;
 
 class ClockComponent extends StatefulWidget {
   @override
@@ -140,6 +135,7 @@ class ClockComponentState extends State<ClockComponent> with WidgetsBindingObser
     width: 640,
     foregroundColor: Colors.grey,
     backgroundColor: Colors.black,
+    blinkColor: Colors.grey,
     backgroundImage: null,
     bodyImage: ItemConfig(
       style: H12Style.pic.index,
@@ -174,7 +170,7 @@ class ClockComponentState extends State<ClockComponent> with WidgetsBindingObser
     ),
     slientItem: ItemConfig(
       style: ActionStyle.icon.index,
-      rect: Rect.fromCenter(center: Offset(250, -110), width: 32, height: 32),
+      rect: Rect.fromCenter(center: Offset(260, -110), width: 32, height: 32),
       imgs: [Icons.notifications_off.codePoint.toString(),Icons.notifications.codePoint.toString()],
     ),
   );
@@ -303,7 +299,7 @@ class ClockComponentState extends State<ClockComponent> with WidgetsBindingObser
     //     clockAlert);
     myClock = AlarmClock(
         newSchedule: Schedule(
-          minutes: [0, 15, 30, 45,],
+          minutes: [0, 15, 30, 45],
         ),
         noSoundSchedule: Schedule(hours: [23,0,1,2,3,4,5,6]),
         noWakeLockSchedule: Schedule(hours: "8-15", weekdays: "1-5"),
@@ -337,7 +333,7 @@ class ClockComponentState extends State<ClockComponent> with WidgetsBindingObser
         // showToast(LocaleKeys.launch_forceUpgradeAlert.tr(),showInSec: 15);
         showToast(Setting.androidUpdateLog, showInSec: 15);
         String apkFile = await saveUrlFile(Setting.androidAppUrl);
-        vibrate.littleShake();
+        littleShake();
         await installApk(apkFile, AppId);
       }
     });
@@ -362,7 +358,7 @@ class ClockComponentState extends State<ClockComponent> with WidgetsBindingObser
         } else
           clockConfig = textClock;
       } catch (e) {
-        logger.fine(e);
+        logger.warning(e);
         Application.cache.remove(DefaultSkin);
         clockConfig = textClock;
       }
@@ -371,6 +367,7 @@ class ClockComponentState extends State<ClockComponent> with WidgetsBindingObser
       forceInit = false;
     }
     logger.fine("finally use ${clockConfig.skinName} config.");
+    largePrint(clockConfig.toString());
   }
 
   @override
@@ -385,13 +382,34 @@ class ClockComponentState extends State<ClockComponent> with WidgetsBindingObser
     Application.cache.setString(DefaultSkin, skinName);
   }
 
+  void defaultExitAction(BuildContext context){
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("您真的要退出时钟程序吗？"),
+          actions: <Widget>[
+            TextButton(
+              child: Text("按错了"),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            TextButton(
+              child: Text("狠心离开"),
+              onPressed: () => SystemNavigator.pop(),
+            ),
+          ],
+        ));
+  }
+
   void onClockEvent(dynamic t) {
     if(t is ClockEvent) {
+      logger.fine("ClockEvent:${t.clockEventType.toString()} fired");
       if (t.clockEventType == ClockEventType.skinChange) {
-        logger.fine(t.value);
         setState(() {
           reloadConfig();
         });
+      }
+      if(t.clockEventType == ClockEventType.setting){
+        showSettingCompoment(context);
       }
       if (t.clockEventType == ClockEventType.sleepScheduleChange) {
         myClock.noWakeLockSchedule = t.value;
@@ -403,6 +421,14 @@ class ClockComponentState extends State<ClockComponent> with WidgetsBindingObser
         myClock.setSlient = t.value;
       }
     }
+  }
+
+  void showSettingCompoment(BuildContext context){
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) {
+        return SettingComponent();
+      },
+    )).then((value) => onClockEvent(value));
   }
 
   @override
@@ -423,6 +449,7 @@ class ClockComponentState extends State<ClockComponent> with WidgetsBindingObser
           width: screenSize.width,
           config: clockConfig,
           onClockEvent: onClockEvent,
+          // onExitAction: defaultExitAction,
         ),
       ),
     );

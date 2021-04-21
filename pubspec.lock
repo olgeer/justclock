@@ -113,6 +113,15 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.0"
+  digital_clock:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: main
+      resolved-ref: "39b37e441c878db913b080c6ec6f1af326701f48"
+      url: "git://github.com/olgeer/digital_clock.git"
+    source: git
+    version: "0.0.2"
   easy_localization:
     dependency: "direct main"
     description:

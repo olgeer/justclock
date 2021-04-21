@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:basic_utils/basic_utils.dart';
 import 'package:auto_orientation/auto_orientation.dart';
 import 'package:cron/cron.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:hash/hash.dart' as hash;
 import 'package:http/http.dart';
 import 'package:install_apk_plugin/install_apk_plugin.dart';
@@ -12,7 +13,9 @@ import 'package:justclock/pkg/logger.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+typedef voidProc = void Function();
 typedef eventCall = void Function(dynamic value);
+typedef contextProc = void Function(BuildContext context);
 
 String genKey({int lenght = 24}) {
   const randomChars = [
@@ -183,7 +186,7 @@ void writeFileString(String filepath, String contents) async {
     writeFile.createSync(recursive: true);
   }
   writeFile.writeAsStringSync(contents);
-  logger.fine( "New file = ${writeFile.path}");
+  logger.fine("New file = ${writeFile.path}");
 }
 
 String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
@@ -202,8 +205,8 @@ Future<String> sha512(String filePath) async {
 
 List<String> objectListToStringList(List<dynamic> listObject) {
   List<String> newListString;
-  if(listObject!=null) {
-    newListString=[];
+  if (listObject != null) {
+    newListString = [];
     for (dynamic obj in listObject) {
       newListString.add(obj.toString());
     }
@@ -249,10 +252,10 @@ void largeDebug(String logTag, dynamic msg) {
 
   for (String oneLine in str.split("\n")) {
     while (oneLine.length > maxPrintLenght) {
-      logger.fine( oneLine.substring(0, maxPrintLenght));
+      logger.fine(oneLine.substring(0, maxPrintLenght));
       oneLine = oneLine.substring(maxPrintLenght);
     }
-    logger.fine( oneLine);
+    logger.fine(oneLine);
   }
 }
 
@@ -270,8 +273,10 @@ void setRotateMode({bool canRotate = true}) {
 }
 
 Future<Response> getUrlFile(String url,
-    {int retry = 3, int seconds = 3,eventCall onSuccess,
-      eventCall onError}) async {
+    {int retry = 3,
+    int seconds = 3,
+    eventCall onSuccess,
+    eventCall onError}) async {
   Response tmp;
 
   do {
@@ -281,10 +286,10 @@ Future<Response> getUrlFile(String url,
       print("get file error:$e");
       await Future.delayed(Duration(seconds: seconds));
     }
-    if (tmp.statusCode==200 && onSuccess != null) onSuccess(tmp);
+    if (tmp.statusCode == 200 && onSuccess != null) onSuccess(tmp);
   } while ((tmp == null || tmp.statusCode != 200) && --retry > 0);
 
-  if (tmp?.statusCode!=200 && onError != null) onError(tmp?.statusCode);
+  if (tmp?.statusCode != 200 && onError != null) onError(tmp?.statusCode);
   return tmp?.statusCode == 200 ? tmp : null;
 }
 
@@ -360,7 +365,7 @@ bool fileRename(String beforeName, String afterName) {
   // logger.fine( "Ready rename\n$beforeName\n to \n$afterName");
   if (beforeFile.existsSync()) {
     beforeFile.renameSync(afterName);
-    logger.fine( "Renamed\n$beforeName\n to \n$afterName");
+    logger.fine("Renamed\n$beforeName\n to \n$afterName");
     return true;
   }
   return false;
@@ -444,4 +449,16 @@ String int2Str(int value, {int width = 2}) {
     s = "0" + s;
   }
   return s;
+}
+
+///按一定时间间隔重复执行processer方法，方法调用后立即执行processer方法，如millisecondInterval不为null则按此间隔继续执行
+void intervalAction(voidProc processer, {List<int> millisecondInterval}) {
+  if (processer != null) {
+    processer();
+    if (millisecondInterval?.isNotEmpty == true) {
+      for (int i in millisecondInterval) {
+        Future.delayed(Duration(milliseconds: i), processer);
+      }
+    }
+  }
 }
