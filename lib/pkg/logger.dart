@@ -2,9 +2,15 @@
 import 'package:logging/logging.dart';
 import 'package:console/console.dart';
 
-final Logger logger = Logger('JustClock');
+final Logger logger = Logger('System');
+
+Logger newInstanse({String logTag=""}){
+  return Logger(logTag);
+}
+
 void initLogger({Level logLevel=Level.FINE}){
-  logger.onRecord.listen((event) {
+  Logger.root.level = logLevel;
+  Logger.root.onRecord.listen((event) {
     String color="{@yellow}";
     final String colorEnd="{@end}";
     switch(event.level.value){

@@ -7,23 +7,25 @@ import 'package:flutter/services.dart';
 import 'package:justclock/config/application.dart';
 import 'package:justclock/config/constants.dart';
 import 'package:justclock/config/setting.dart';
-import 'package:justclock/pkg/logger.dart';
 import 'package:justclock/pkg/utils.dart';
 import 'package:justclock/widget/Toast.dart';
 import 'package:justclock/widget/clockSetting.dart';
 import 'package:flutter/material.dart';
 import 'package:wakelock/wakelock.dart';
+import 'package:justclock/pkg/logger.dart' as log;
+import 'package:logging/logging.dart';
 
 class ClockComponent extends StatefulWidget {
   @override
   ClockComponentState createState() => ClockComponentState();
 }
 
-class ClockComponentState extends State<ClockComponent> with WidgetsBindingObserver{
-  final String LOGTAG = "Clock";
+class ClockComponentState extends State<ClockComponent>
+    with WidgetsBindingObserver {
+  final Logger logger = log.newInstanse(logTag: "JustClock");
   bool forceInit = false;
   AlarmClock myClock;
-  // Cron cron;
+  Cron cron;
 
   DigitalClockConfig textClock = DigitalClockConfig(
     "TextClock",
@@ -81,7 +83,7 @@ class ClockComponentState extends State<ClockComponent> with WidgetsBindingObser
     foregroundColor: Colors.greenAccent,
     // backgroundImage: "assets/clock/bg.png",
     // bodyImage: "assets/clock/body.png",
-    timeType: TimeType.h12,
+    timeType: TimeType.h24,
   );
 
   DigitalClockConfig flipClock2 = DigitalClockConfig(
@@ -171,100 +173,18 @@ class ClockComponentState extends State<ClockComponent> with WidgetsBindingObser
     slientItem: ItemConfig(
       style: ActionStyle.icon.index,
       rect: Rect.fromCenter(center: Offset(260, -110), width: 32, height: 32),
-      imgs: [Icons.notifications_off.codePoint.toString(),Icons.notifications.codePoint.toString()],
+      imgs: [
+        Icons.notifications_off.codePoint.toString(),
+        Icons.notifications.codePoint.toString()
+      ],
     ),
   );
 
   DigitalClockConfig clockConfig;
-  // Future clockAlert() async {
-  //   // logger.fine("Running clockalert!");
-  //   int alertSound = 1;
-  //   if (Application.alertAtHour) {
-  //     var now = DateTime.now();
-  //     String alertMsg = LocaleKeys.clock_normalAlert;
-  //     String alertTime;
-  //     switch (now.minute) {
-  //       case 30:
-  //         alertTime = LocaleKeys.clock_halfPast.tr(args: [now.hour.toString()]);
-  //         alertSound = 2;
-  //         vibrate.mediumVibrate();
-  //         break;
-  //       case 0:
-  //         alertTime = LocaleKeys.clock_oclock.tr(args: [now.hour.toString()]);
-  //         alertSound = 3;
-  //         vibrate.longVibrate();
-  //         break;
-  //       case 15:
-  //         alertTime =
-  //             LocaleKeys.clock_oneQuarter.tr(args: [now.hour.toString()]);
-  //         alertSound = 2;
-  //         vibrate.littleShake();
-  //         break;
-  //       case 45:
-  //         alertTime =
-  //             LocaleKeys.clock_threeQuarter.tr(args: [now.hour.toString()]);
-  //         alertSound = 2;
-  //         vibrate.littleShake();
-  //         break;
-  //     }
-  //     if (Application.comfortableGreeting && isWorkday(now)) {
-  //       switch (now.hour) {
-  //         case 23:
-  //         case 0:
-  //         case 1:
-  //           alertMsg = LocaleKeys.clock_midnightGreeting;
-  //           break;
-  //         case 2:
-  //         case 3:
-  //         case 4:
-  //         case 5:
-  //           alertMsg = LocaleKeys.clock_deepnightGreeting;
-  //           break;
-  //         case 6:
-  //         case 7:
-  //         case 8:
-  //         case 9:
-  //           alertMsg = LocaleKeys.clock_morningGreeting;
-  //           break;
-  //         case 10:
-  //         case 11:
-  //         case 14:
-  //         case 15:
-  //         case 16:
-  //         case 17:
-  //           alertMsg = LocaleKeys.clock_worktimeGreeting;
-  //           break;
-  //         case 12:
-  //           alertMsg = LocaleKeys.clock_lunchGreeting;
-  //           break;
-  //         case 13:
-  //           alertMsg = LocaleKeys.clock_noonbreakGreeting;
-  //           break;
-  //         case 18:
-  //           alertMsg = LocaleKeys.clock_offworkGreeting;
-  //           break;
-  //         case 19:
-  //         case 20:
-  //         case 21:
-  //         case 22:
-  //           alertMsg = LocaleKeys.clock_eveningGreeting;
-  //           break;
-  //       }
-  //     }
-  //
-  //     logger.fine("play sound #$alertSound");
-  //
-  //     //仅设定时间段内报时
-  //     if (Schedule.parse("* * $alarmBegin-$alarmEnd * * *").match(now)) {
-  //       soundpool.play(alertSound);
-  //     }
-  //     showToast(alertMsg.tr(args: [alertTime]));
-  //   }
-  // }
 
   @override
   void initState() {
-    WidgetsBinding.instance.addObserver(this);  //添加观察者
+    WidgetsBinding.instance.addObserver(this); //添加观察者
     // vibrate.init();
     //
     // sound.init();
@@ -301,20 +221,36 @@ class ClockComponentState extends State<ClockComponent> with WidgetsBindingObser
         newSchedule: Schedule(
           minutes: [0, 15, 30, 45],
         ),
-        noSoundSchedule: Schedule(hours: [23,0,1,2,3,4,5,6]),
+        quarterAlarmSound: "assets/voices/钟琴颤音.mp3",
+        halfAlarmSound: "assets/voices/短促欢愉.mp3",
+        oclockAlarmSound: "assets/voices/座钟报时.mp3",
+        noSoundSchedule: Schedule(hours: [23, 0, 1, 2, 3, 4, 5, 6]),
         noWakeLockSchedule: Schedule(hours: "8-15", weekdays: "1-5"),
-        sleepEnableAction: () => logger.fine("sleepEnableAction() run ${Wakelock.disable()}"),
-        sleepDisableAction: () => logger.fine("sleepDisableAction() run ${Wakelock.enable()}"));
-    myClock.addSpecialSchedule(Schedule(hours: "2-5"), "已经 {} 了，熬夜看书不是个好习惯，赶紧睡吧");
-    myClock.addSpecialSchedule(Schedule(hours: [23,0,1]), "夜猫子，不要看太晚了，已经 {} 了");
+        sleepEnableAction: () =>
+            logger.fine("sleepEnableAction() run ${Wakelock.disable()}"),
+        sleepDisableAction: () =>
+            logger.fine("sleepDisableAction() run ${Wakelock.enable()}"));
+    myClock.addSpecialSchedule(
+        Schedule(hours: "2-5"), "已经 {} 了，熬夜看书不是个好习惯，赶紧睡吧");
+    myClock.addSpecialSchedule(
+        Schedule(hours: [23, 0, 1]), "夜猫子，不要看太晚了，已经 {} 了");
     myClock.addSpecialSchedule(Schedule(hours: "6-8"), "早起读书精神爽，现在是 {} 了");
     myClock.addSpecialSchedule(Schedule(hours: 9), "抓紧时间上班吧，已经 {} 了");
-    myClock.addSpecialSchedule(Schedule(hours: [10,11,14,15,16,17]), "上班摸鱼可不是好习惯，现在是 {}");
+    myClock.addSpecialSchedule(
+        Schedule(hours: [10, 11, 14, 15, 16, 17]), "上班摸鱼可不是好习惯，现在是 {}");
     myClock.addSpecialSchedule(Schedule(hours: 12), "现在是 {}，赶紧吃饭去吧");
     myClock.addSpecialSchedule(Schedule(hours: 13), "现在是 {}，午休时间哦，眯一会儿吧");
     myClock.addSpecialSchedule(Schedule(hours: 18), "现在是 {}，总算下班了");
     myClock.addSpecialSchedule(Schedule(hours: "19-22"), "只要不加班，快活到天亮，现在是 {}");
-    myClock.addSpecialSchedule(Schedule(days: 15,months: 4), "今天是闹钟模块诞生的日子，值得纪念");
+    myClock.addSpecialSchedule(
+        Schedule(days: 15, months: 4), "今天是闹钟模块诞生的日子，值得纪念");
+  }
+
+
+  @override
+  void didChangeMetrics() {
+    Application.screenSize = WidgetsBinding.instance.window.physicalSize;
+    // print(screenSize);
   }
 
   @override
@@ -333,7 +269,7 @@ class ClockComponentState extends State<ClockComponent> with WidgetsBindingObser
         // showToast(LocaleKeys.launch_forceUpgradeAlert.tr(),showInSec: 15);
         showToast(Setting.androidUpdateLog, showInSec: 15);
         String apkFile = await saveUrlFile(Setting.androidAppUrl);
-        littleShake();
+        Vibrate.littleShake();
         await installApk(apkFile, AppId);
       }
     });
@@ -382,48 +318,53 @@ class ClockComponentState extends State<ClockComponent> with WidgetsBindingObser
     Application.cache.setString(DefaultSkin, skinName);
   }
 
-  void defaultExitAction(BuildContext context){
+  void defaultExitAction(BuildContext context) {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text("您真的要退出时钟程序吗？"),
-          actions: <Widget>[
-            TextButton(
-              child: Text("按错了"),
-              onPressed: () => Navigator.pop(context, false),
-            ),
-            TextButton(
-              child: Text("狠心离开"),
-              onPressed: () => SystemNavigator.pop(),
-            ),
-          ],
-        ));
+              title: Text("您真的要退出时钟程序吗？"),
+              actions: <Widget>[
+                TextButton(
+                  child: Text("按错了"),
+                  onPressed: () => Navigator.pop(context, false),
+                ),
+                TextButton(
+                  child: Text("狠心离开"),
+                  onPressed: () => SystemNavigator.pop(),
+                ),
+              ],
+            ));
   }
 
   void onClockEvent(dynamic t) {
-    if(t is ClockEvent) {
+    if (t is ClockEvent) {
       logger.fine("ClockEvent:${t.clockEventType.toString()} fired");
-      if (t.clockEventType == ClockEventType.skinChange) {
-        setState(() {
-          reloadConfig();
-        });
-      }
-      if(t.clockEventType == ClockEventType.setting){
-        showSettingCompoment(context);
-      }
-      if (t.clockEventType == ClockEventType.sleepScheduleChange) {
-        myClock.noWakeLockSchedule = t.value;
-      }
-      if (t.clockEventType == ClockEventType.slientScheduleChange) {
-        myClock.noSoundSchedule = t.value;
-      }
-      if (t.clockEventType == ClockEventType.slientChange) {
-        myClock.setSlient = t.value;
+      switch (t.clockEventType) {
+        case ClockEventType.skinChange:
+          setState(() {
+            reloadConfig();
+          });
+          break;
+        case ClockEventType.setting:
+          showSettingCompoment(context);
+          break;
+        case ClockEventType.sleepScheduleChange:
+          myClock.noWakeLockSchedule = t.value;
+          break;
+        case ClockEventType.slientScheduleChange:
+          myClock.noSoundSchedule = t.value;
+          break;
+        case ClockEventType.slientChange:
+          myClock.setSlient = t.value;
+          break;
+        case ClockEventType.exit:
+        default:
+          break;
       }
     }
   }
 
-  void showSettingCompoment(BuildContext context){
+  void showSettingCompoment(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
         return SettingComponent();

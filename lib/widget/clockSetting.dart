@@ -16,6 +16,8 @@ import 'package:justclock/widget/imageCardList.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:time_range_picker/time_range_picker.dart';
 import 'package:vibration/vibration.dart';
+import 'package:justclock/pkg/logger.dart' as log;
+import 'package:logging/logging.dart';
 
 class SettingComponent extends StatefulWidget {
   @override
@@ -23,6 +25,7 @@ class SettingComponent extends StatefulWidget {
 }
 
 class SettingComponentState extends State<SettingComponent> {
+  final Logger logger = log.newInstanse(logTag: "SettingComponent");
   var skinList;
   Map<String, String> skinMap;
   String skinPkgUrl;
@@ -30,6 +33,7 @@ class SettingComponentState extends State<SettingComponent> {
   final TextStyle settingChapterStyle =
       TextStyle(fontSize: 20, color: Colors.teal.shade300);
   bool forceUpdate = false;
+  bool isProcessing = false;
 
   @override
   void initState() {
@@ -61,6 +65,11 @@ class SettingComponentState extends State<SettingComponent> {
   }
 
   void changeSkin(String skinTitle, ImageProvider sample) async {
+    //防止二次提交
+    setState(() {
+      isProcessing = true;
+    });
+
     String skinDir = "${Application.appRootPath}/skins/";
     for (var m in skinList["skin"]) {
       if (skinTitle.compareTo(m["title"]) == 0) {
@@ -89,18 +98,109 @@ class SettingComponentState extends State<SettingComponent> {
         Application.cache.setString(DefaultSkin, skinName);
 
         showToast("皮肤已更换为$skinTitle");
-        Navigator.pop(context, ClockEvent(ClockEventType.skinChange,value:skinName));
+        Navigator.pop(
+            context, ClockEvent(ClockEventType.skinChange, value: skinName));
       }
     }
   }
 
-  List<int> fromTimeRange(TimeRange t){
-    List<int> hours=List<int>();
-    int i=t.startTime.hour;
-    while(i!=t.endTime.hour){
+  void changeSleepSchedule() async {
+    //防止二次提交
+    setState(() {
+      isProcessing = true;
+    });
+
+    TimeRange result = await showTimeRangePicker(
+      context: context,
+      paintingStyle: PaintingStyle.fill,
+      backgroundColor: Colors.grey.withOpacity(0.2),
+      labels: [
+        ClockLabel.fromTime(time: TimeOfDay(hour: 8, minute: 0), text: "上班"),
+        ClockLabel.fromTime(time: TimeOfDay(hour: 18, minute: 0), text: "回家")
+      ],
+      start: TimeOfDay(hour: 8, minute: 0),
+      end: TimeOfDay(hour: 17, minute: 0),
+      interval: Duration(hours: 1),
+      ticks: 8,
+      strokeColor: Theme.of(context).primaryColor.withOpacity(0.5),
+      ticksColor: Theme.of(context).primaryColor,
+      labelOffset: 15,
+      padding: 60,
+      // disabledTime: TimeRange(
+      //     startTime: TimeOfDay(hour: 18, minute: 0),
+      //     endTime: TimeOfDay(hour: 8, minute: 0)),
+      disabledColor: Colors.red.withOpacity(0.5),
+    );
+
+    isProcessing = true;
+    setState(() {});
+
+    showToast("休眠时段已设定为周一至周五， ${fromTimeRange(result)} 点");
+
+    Navigator.pop(
+        context,
+        ClockEvent(ClockEventType.sleepScheduleChange,
+            value: Schedule(hours: fromTimeRange(result), weekdays: "1-5")));
+  }
+
+  void changeSlientSchedule() async {
+    //防止二次提交
+    setState(() {
+      isProcessing = true;
+    });
+
+    TimeRange result = await showTimeRangePicker(
+      context: context,
+      paintingStyle: PaintingStyle.fill,
+      backgroundColor: Colors.grey.withOpacity(0.2),
+      labels: [
+        ClockLabel.fromTime(time: TimeOfDay(hour: 7, minute: 0), text: "起床"),
+        ClockLabel.fromTime(time: TimeOfDay(hour: 23, minute: 0), text: "睡觉")
+      ],
+      start: TimeOfDay(hour: 0, minute: 0),
+      end: TimeOfDay(hour: 6, minute: 0),
+      interval: Duration(hours: 1),
+      ticks: 8,
+      strokeColor: Theme.of(context).primaryColor.withOpacity(0.5),
+      ticksColor: Theme.of(context).primaryColor,
+      labelOffset: 15,
+      padding: 60,
+      // disabledTime: TimeRange(
+      //     startTime: TimeOfDay(hour: 7, minute: 0),
+      //     endTime: TimeOfDay(hour: 23, minute: 0)),
+      disabledColor: Colors.redAccent.withOpacity(0.5),
+    );
+
+    isProcessing = true;
+    setState(() {});
+
+    showToast("静音时段间已设定为 ${fromTimeRange(result)} 点");
+
+    Navigator.pop(
+        context,
+        ClockEvent(ClockEventType.slientScheduleChange,
+            value: Schedule(hours: fromTimeRange(result))));
+  }
+
+  void upgradeApk() async {
+    //防止二次提交
+    setState(() {
+      isProcessing = true;
+    });
+
+    showToast("正在升级应用，请稍后。。。");
+    String apkFile = await saveUrlFile(Setting.androidAppUrl);
+    Vibration.vibrate();
+    await installApk(apkFile, AppId);
+  }
+
+  List<int> fromTimeRange(TimeRange t) {
+    List<int> hours = [];
+    int i = t.startTime.hour;
+    while (i != t.endTime.hour) {
       hours.add(i);
       i++;
-      if(i==24)i=0;
+      if (i == 24) i = 0;
     }
     hours.add(i);
     return hours;
@@ -163,7 +263,7 @@ class SettingComponentState extends State<SettingComponent> {
                         titleColor: themeColor,
                         map: skinMap,
                         displayNameTag: true,
-                        onTap: changeSkin,
+                        onTap: isProcessing ? null : changeSkin,
                       )
                     ],
                   ),
@@ -204,34 +304,7 @@ class SettingComponentState extends State<SettingComponent> {
                       color: Colors.indigo,
                       size: 32,
                     ),
-                    onTap: () async {
-                      TimeRange result = await showTimeRangePicker(
-                        context: context,
-                        paintingStyle: PaintingStyle.fill,
-                        backgroundColor: Colors.grey.withOpacity(0.2),
-                        labels: [
-                          ClockLabel.fromTime(
-                              time: TimeOfDay(hour: 8, minute: 0), text: "上班"),
-                          ClockLabel.fromTime(
-                              time: TimeOfDay(hour: 18, minute: 0), text: "回家")
-                        ],
-                        start: TimeOfDay(hour: 8, minute: 0),
-                        end: TimeOfDay(hour: 17, minute: 0),
-                        interval: Duration(hours: 1),
-                        ticks: 8,
-                        strokeColor:
-                            Theme.of(context).primaryColor.withOpacity(0.5),
-                        ticksColor: Theme.of(context).primaryColor,
-                        labelOffset: 15,
-                        padding: 60,
-                        disabledTime: TimeRange(
-                            startTime: TimeOfDay(hour: 18, minute: 0),
-                            endTime: TimeOfDay(hour: 8, minute: 0)),
-                        disabledColor: Colors.red.withOpacity(0.5),
-                      );
-
-                      Navigator.pop(context, ClockEvent(ClockEventType.sleepScheduleChange,value:Schedule(hours: fromTimeRange(result),weekdays: "1-5")));
-                    }),
+                    onTap: isProcessing ? null : changeSleepSchedule),
                 ListTile(
                     title: Text("免打搅时段"),
                     trailing: Icon(
@@ -239,33 +312,7 @@ class SettingComponentState extends State<SettingComponent> {
                       color: Colors.teal,
                       size: 32,
                     ),
-                    onTap: () async {
-                      TimeRange result = await showTimeRangePicker(
-                        context: context,
-                        paintingStyle: PaintingStyle.fill,
-                        backgroundColor: Colors.grey.withOpacity(0.2),
-                        labels: [
-                          ClockLabel.fromTime(
-                              time: TimeOfDay(hour: 7, minute: 0), text: "起床"),
-                          ClockLabel.fromTime(
-                              time: TimeOfDay(hour: 23, minute: 0), text: "睡觉")
-                        ],
-                        start: TimeOfDay(hour: 0, minute: 0),
-                        end: TimeOfDay(hour: 6, minute: 0),
-                        interval: Duration(hours: 1),
-                        ticks: 8,
-                        strokeColor:
-                            Theme.of(context).primaryColor.withOpacity(0.5),
-                        ticksColor: Theme.of(context).primaryColor,
-                        labelOffset: 15,
-                        padding: 60,
-                        disabledTime: TimeRange(
-                            startTime: TimeOfDay(hour: 7, minute: 0),
-                            endTime: TimeOfDay(hour: 23, minute: 0)),
-                        disabledColor: Colors.redAccent.withOpacity(0.5),
-                      );
-                      Navigator.pop(context, ClockEvent(ClockEventType.slientScheduleChange,value:Schedule(hours: fromTimeRange(result))));
-                    }),
+                    onTap: isProcessing ? null : changeSlientSchedule),
                 Divider(
                   color: Colors.grey,
                   thickness: 1.0,
@@ -299,12 +346,7 @@ class SettingComponentState extends State<SettingComponent> {
                     size: 32,
                     color: Colors.greenAccent,
                   ),
-                  onTap: () async {
-                    showToast("正在升级应用，请稍后。。。");
-                    String apkFile = await saveUrlFile(Setting.androidAppUrl);
-                    Vibration.vibrate();
-                    await installApk(apkFile, AppId);
-                  },
+                  onTap: isProcessing ? null : upgradeApk,
                 ),
               ],
             ),

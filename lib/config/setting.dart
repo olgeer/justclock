@@ -41,7 +41,7 @@ class Setting {
     try {
       logger.fine( url);
       logger.fine(url);
-      final response = await http.get(url);
+      final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
         Map<String, dynamic> configJson = json.decode(utf8.decode(response.bodyBytes));

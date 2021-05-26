@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:justclock/pkg/logger.dart';
 
 //App启动前预处理
-void preProcess() async {
+Future preProcess() async {
   Application.appRootPath = await initPath();
   Application.cache = await SharedPreferences.getInstance();
 

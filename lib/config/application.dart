@@ -5,12 +5,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Application {
   static SharedPreferences cache;
   static String defaultSkin;
-  static String lastLocateTime;
   static String appRootPath;
-  static bool isDark;
   static Size screenSize;
-  static bool stopListen=false;
 
+  static bool stopListen=false;
+  static bool isDark=false;
   static bool needReload=true;
   ///系统屏幕旋转同步开关
   static bool canRotate=false;

@@ -293,11 +293,17 @@ Future<Response> getUrlFile(String url,
   return tmp?.statusCode == 200 ? tmp : null;
 }
 
+Directory getCurrentDir() {
+  return Directory.current;
+}
+
 Future<String> initPath() async {
   Directory tempDir = Platform.isIOS
       ? await getLibraryDirectory()
-      : await getExternalStorageDirectory();
-  return tempDir.path;
+      : Platform.isAndroid
+          ? await getExternalStorageDirectory()
+          : getCurrentDir();
+  return tempDir?.path ?? "";
 }
 
 Future<String> saveUrlFile(String url,

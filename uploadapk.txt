@@ -1,4 +1,4 @@
 cd web/justclock/android
 rm app.apk
-put ./build/app/outputs/flutter-apk/app.apk .
+put ./build/app/outputs/flutter-apk/app-release.apk ./app.apk
 quit
