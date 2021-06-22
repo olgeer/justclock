@@ -9,6 +9,8 @@ PODS:
     - FlutterMacOS
   - soundpool_macos (1.0.0):
     - FlutterMacOS
+  - wakelock_macos (0.0.1):
+    - FlutterMacOS
   - ZIPFoundation (0.9.11)
 
 DEPENDENCIES:
@@ -17,6 +19,7 @@ DEPENDENCIES:
   - path_provider_macos (from `Flutter/ephemeral/.symlinks/plugins/path_provider_macos/macos`)
   - shared_preferences_macos (from `Flutter/ephemeral/.symlinks/plugins/shared_preferences_macos/macos`)
   - soundpool_macos (from `Flutter/ephemeral/.symlinks/plugins/soundpool_macos/macos`)
+  - wakelock_macos (from `Flutter/ephemeral/.symlinks/plugins/wakelock_macos/macos`)
 
 SPEC REPOS:
   trunk:
@@ -33,6 +36,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/shared_preferences_macos/macos
   soundpool_macos:
     :path: Flutter/ephemeral/.symlinks/plugins/soundpool_macos/macos
+  wakelock_macos:
+    :path: Flutter/ephemeral/.symlinks/plugins/wakelock_macos/macos
 
 SPEC CHECKSUMS:
   flutter_archive: 3505db9fe514c400c6310d752aed9bd457b6a8cf
@@ -40,6 +45,7 @@ SPEC CHECKSUMS:
   path_provider_macos: a0a3fd666cb7cd0448e936fb4abad4052961002b
   shared_preferences_macos: 480ce071d0666e37cef23fe6c702293a3d21799e
   soundpool_macos: 3bc0b8b238407516ad9b8afc2647670ff58124f9
+  wakelock_macos: f1457c9101563f8ddc3498664d8da40d9117309d
   ZIPFoundation: b1f0de4eed33e74a676f76e12559ab6b75990197
 
 PODFILE CHECKSUM: 6eac6b3292e5142cfc23bdeb71848a40ec51c14c

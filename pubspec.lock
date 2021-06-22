@@ -84,13 +84,13 @@ packages:
       name: cron
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.2.4"
+    version: "0.3.0"
   digital_clock:
     dependency: "direct main"
     description:
       path: "."
       ref: main
-      resolved-ref: "1de30de1647fa45d29dc5951a6d0e53875f57bb1"
+      resolved-ref: a32ac5b8c2e41018f7ddb43bcff1ad1771e241d5
       url: "git://github.com/olgeer/digital_clock.git"
     source: git
     version: "0.0.2"
@@ -143,7 +143,7 @@ packages:
       name: fluttertoast
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "4.0.1"
+    version: "8.0.7"
   hash:
     dependency: "direct main"
     description:
@@ -263,6 +263,15 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.11.0"
+  phone_lamp:
+    dependency: transitive
+    description:
+      path: "."
+      ref: main
+      resolved-ref: "1202d707043d032ed2a68be570c7fb9b5b234894"
+      url: "https://github.com/olgeer/phone_lamp.git"
+    source: git
+    version: "0.0.1"
   pigment:
     dependency: transitive
     description:
@@ -337,28 +346,28 @@ packages:
       name: soundpool
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.0.0-nullsafety.0"
+    version: "2.1.0"
   soundpool_macos:
     dependency: transitive
     description:
       name: soundpool_macos
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.0.0-nullsafety.0"
+    version: "2.1.0"
   soundpool_platform_interface:
     dependency: transitive
     description:
       name: soundpool_platform_interface
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.0.0-nullsafety.0"
+    version: "2.1.0"
   soundpool_web:
     dependency: transitive
     description:
       name: soundpool_web
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.0.0-nullsafety.0"
+    version: "2.1.0"
   source_span:
     dependency: transitive
     description:
@@ -435,21 +444,49 @@ packages:
       name: vibration
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.7.3"
+    version: "1.7.4-nullsafety.0"
   vibration_web:
     dependency: transitive
     description:
       name: vibration_web
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.6.2"
+    version: "1.6.3-nullsafety.0"
   wakelock:
     dependency: transitive
     description:
       name: wakelock
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.1.4+2"
+    version: "0.5.2"
+  wakelock_macos:
+    dependency: transitive
+    description:
+      name: wakelock_macos
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.1.0+1"
+  wakelock_platform_interface:
+    dependency: transitive
+    description:
+      name: wakelock_platform_interface
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.2.1+1"
+  wakelock_web:
+    dependency: transitive
+    description:
+      name: wakelock_web
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.2.0+1"
+  wakelock_windows:
+    dependency: transitive
+    description:
+      name: wakelock_windows
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.1.0"
   win32:
     dependency: transitive
     description:
@@ -464,13 +501,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.2.0"
-  zeking_flash_lamp:
-    dependency: transitive
-    description:
-      name: zeking_flash_lamp
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.0.1"
 sdks:
   dart: ">=2.12.0 <3.0.0"
   flutter: ">=2.0.0"

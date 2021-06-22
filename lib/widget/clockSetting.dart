@@ -135,12 +135,24 @@ class SettingComponentState extends State<SettingComponent> {
     isProcessing = true;
     setState(() {});
 
-    showToast("休眠时段已设定为周一至周五， ${fromTimeRange(result)} 点");
+    if(result!=null){
+      List<int> tempRange =fromTimeRange(result);
+      if(tempRange.length>1) {
+        showToast("休眠时段已设定为周一至周五， $tempRange 点");
 
-    Navigator.pop(
-        context,
-        ClockEvent(ClockEventType.sleepScheduleChange,
-            value: Schedule(hours: fromTimeRange(result), weekdays: "1-5")));
+        Navigator.pop(
+            context,
+            ClockEvent(ClockEventType.sleepScheduleChange,
+                value: Schedule(
+                    hours: fromTimeRange(result), weekdays: "1-5")));
+      }else{
+        showToast("休眠时段已取消");
+
+        Navigator.pop(
+            context,
+            ClockEvent(ClockEventType.sleepScheduleChange));
+      }
+    }
   }
 
   void changeSlientSchedule() async {
@@ -174,12 +186,23 @@ class SettingComponentState extends State<SettingComponent> {
     isProcessing = true;
     setState(() {});
 
-    showToast("静音时段间已设定为 ${fromTimeRange(result)} 点");
+    if(result!=null) {
+      List<int> tempRange = fromTimeRange(result);
+      if (tempRange.length > 1) {
+        showToast("静音时段间已设定为 ${fromTimeRange(result)} 点");
 
-    Navigator.pop(
-        context,
-        ClockEvent(ClockEventType.slientScheduleChange,
-            value: Schedule(hours: fromTimeRange(result))));
+        Navigator.pop(
+            context,
+            ClockEvent(ClockEventType.slientScheduleChange,
+                value: Schedule(hours: fromTimeRange(result))));
+      }else{
+        showToast("已取消静音时段间");
+
+        Navigator.pop(
+            context,
+            ClockEvent(ClockEventType.slientScheduleChange));
+      }
+    }
   }
 
   void upgradeApk() async {

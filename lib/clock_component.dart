@@ -25,6 +25,8 @@ class ClockComponentState extends State<ClockComponent>
   final Logger logger = log.newInstanse(logTag: "JustClock");
   bool forceInit = false;
   AlarmClock myClock;
+  DigitalClock clockWidget;
+  bool needFresh = true;
   Cron cron;
 
   DigitalClockConfig textClock = DigitalClockConfig(
@@ -230,6 +232,7 @@ class ClockComponentState extends State<ClockComponent>
             logger.fine("sleepEnableAction() run ${Wakelock.disable()}"),
         sleepDisableAction: () =>
             logger.fine("sleepDisableAction() run ${Wakelock.enable()}"));
+
     myClock.addSpecialSchedule(
         Schedule(hours: "2-5"), "已经 {} 了，熬夜看书不是个好习惯，赶紧睡吧");
     myClock.addSpecialSchedule(
@@ -246,10 +249,10 @@ class ClockComponentState extends State<ClockComponent>
         Schedule(days: 15, months: 4), "今天是闹钟模块诞生的日子，值得纪念");
   }
 
-
   @override
   void didChangeMetrics() {
     Application.screenSize = WidgetsBinding.instance.window.physicalSize;
+    needFresh = true;
     // print(screenSize);
   }
 
@@ -304,6 +307,7 @@ class ClockComponentState extends State<ClockComponent>
     }
     logger.fine("finally use ${clockConfig.skinName} config.");
     largePrint(clockConfig.toString());
+    needFresh = true;
   }
 
   @override
@@ -372,26 +376,43 @@ class ClockComponentState extends State<ClockComponent>
     )).then((value) => onClockEvent(value));
   }
 
+  Widget newDigitalClock(bool fresh) {
+    Size screenSize = MediaQuery.of(context).size;
+    if (screenSize.height > screenSize.width) {
+      screenSize = Size(screenSize.height, screenSize.width);
+    }
+    // logger.fine("Screen ${screenSize.toString()}");
+
+    return DigitalClock(
+      height: screenSize.height,
+      width: screenSize.width,
+      sizeChange: fresh,
+      config: clockConfig,
+      onClockEvent: onClockEvent,
+      // onExitAction: defaultExitAction,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     if (screenSize.height > screenSize.width) {
       screenSize = Size(screenSize.height, screenSize.width);
     }
-    logger.fine("Screen ${screenSize.toString()}");
+    // logger.fine("Screen ${screenSize.toString()}");
+    if (needFresh) {
+      clockWidget = newDigitalClock(needFresh);
+      needFresh = false;
+    }else{
+      clockWidget = newDigitalClock(needFresh);
+    }
     return Scaffold(
       body: Container(
         height: screenSize.height,
         width: screenSize.width,
         alignment: Alignment.center,
         color: Colors.grey,
-        child: DigitalClock(
-          height: screenSize.height,
-          width: screenSize.width,
-          config: clockConfig,
-          onClockEvent: onClockEvent,
-          // onExitAction: defaultExitAction,
-        ),
+        child: clockWidget,
       ),
     );
   }
