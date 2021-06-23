@@ -1,6 +1,6 @@
 
 ///App版本
-final String AppVersion = "1.1.8";
+final String AppVersion = "1.2.1";
 ///AppId
 final String AppId = "com.sword.justclock";
 

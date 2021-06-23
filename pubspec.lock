@@ -90,7 +90,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: a32ac5b8c2e41018f7ddb43bcff1ad1771e241d5
+      resolved-ref: "44dc66408c19fbea3a44f3657336bc2df14e416b"
       url: "git://github.com/olgeer/digital_clock.git"
     source: git
     version: "0.0.2"
