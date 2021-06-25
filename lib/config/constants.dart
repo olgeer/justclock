@@ -25,3 +25,8 @@ final String AlertAtHourTag = "System.AlertAtHour";
 final String ComfortableGreetTag = "System.ComfortableGreet";
 final String ListSortModeTag = "System.ListSortMode";
 final String ShowIntroTag = "System.ShowIntro";
+
+final String QuarterAlarmTag = "System.CanQuarterAlarm";
+final String HalfAlarmTag = "System.CanHalfAlarm";
+final String HourAlarmTag = "System.CanHourAlarm";
+

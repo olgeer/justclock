@@ -225,7 +225,7 @@ class ClockComponentState extends State<ClockComponent>
         ),
         quarterAlarmSound: "assets/voices/钟琴颤音.mp3",
         halfAlarmSound: "assets/voices/短促欢愉.mp3",
-        oclockAlarmSound: "assets/voices/座钟报时.mp3",
+        hourAlarmSound: "assets/voices/座钟报时.mp3",
         noSoundSchedule: Schedule(hours: [23, 0, 1, 2, 3, 4, 5, 6]),
         noWakeLockSchedule: Schedule(hours: "8-15", weekdays: "1-5"),
         sleepEnableAction: () =>
@@ -247,6 +247,17 @@ class ClockComponentState extends State<ClockComponent>
     myClock.addSpecialSchedule(Schedule(hours: "19-22"), "只要不加班，快活到天亮，现在是 {}");
     myClock.addSpecialSchedule(
         Schedule(days: 15, months: 4), "今天是闹钟模块诞生的日子，值得纪念");
+
+    getAlarmCache();
+    myClock.canQuarterAlarm = Application.isQuarterAlarm;
+    myClock.canHalfAlarm = Application.isHalfAlarm;
+    myClock.canHourAlarm = Application.isHourAlarm;
+  }
+
+  void getAlarmCache(){
+    Application.isQuarterAlarm=Application.cache.getBool(QuarterAlarmTag)??true;
+    Application.isHalfAlarm=Application.cache.getBool(HalfAlarmTag)??true;
+    Application.isHourAlarm=Application.cache.getBool(HourAlarmTag)??true;
   }
 
   @override

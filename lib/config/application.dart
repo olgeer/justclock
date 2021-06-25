@@ -24,6 +24,10 @@ class Application {
   ///每次启动软件时只进行一次
   static bool isUpdated = false;
 
+  static bool isQuarterAlarm=true;
+  static bool isHalfAlarm=true;
+  static bool isHourAlarm=true;
+
   static bool showIntro=true;
   static bool appCanUpgrade=false;
   static bool hasVibrator=false;

@@ -90,10 +90,10 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "44dc66408c19fbea3a44f3657336bc2df14e416b"
+      resolved-ref: "6732f2facdadac5dab4e2aa8ae796fb02859d2f1"
       url: "git://github.com/olgeer/digital_clock.git"
     source: git
-    version: "0.0.2"
+    version: "1.0.0"
   fake_async:
     dependency: transitive
     description:

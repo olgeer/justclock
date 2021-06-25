@@ -229,6 +229,21 @@ class SettingComponentState extends State<SettingComponent> {
     return hours;
   }
 
+  void setAlarmCache({bool isQuarterAlarm,bool isHalfAlarm,bool isHourAlarm}){
+    if(isQuarterAlarm!=null){
+      Application.isQuarterAlarm=isQuarterAlarm;
+      Application.cache.setBool(QuarterAlarmTag, isQuarterAlarm);
+    }
+    if(isHalfAlarm!=null){
+      Application.isHalfAlarm=isHalfAlarm;
+      Application.cache.setBool(HalfAlarmTag, isHalfAlarm);
+    }
+    if(isHourAlarm!=null){
+      Application.isHourAlarm=isHourAlarm;
+      Application.cache.setBool(HourAlarmTag, isHourAlarm);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -316,6 +331,22 @@ class SettingComponentState extends State<SettingComponent> {
                 ),
               ),
               children: [
+                Divider(
+                  color: Colors.grey,
+                  thickness: 1.0,
+                ),
+                ListTile(
+                    title: Text("报时设置"),
+                    trailing: Container(
+                      width: 200,
+                        child: Row(children: [
+                      Checkbox(value: Application.isQuarterAlarm, onChanged: (v)=>setState(()=>setAlarmCache(isQuarterAlarm: v))),
+                          Text("刻钟"),
+                      Checkbox(value: Application.isHalfAlarm, onChanged: (v)=>setState(()=>setAlarmCache(isHalfAlarm: v))),
+                          Text("半点"),
+                      Checkbox(value: Application.isHourAlarm, onChanged: (v)=>setState(()=>setAlarmCache(isHourAlarm: v))),
+                          Text("整点"),
+                    ],))),
                 Divider(
                   color: Colors.grey,
                   thickness: 1.0,
