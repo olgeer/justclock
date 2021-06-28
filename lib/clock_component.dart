@@ -247,6 +247,12 @@ class ClockComponentState extends State<ClockComponent>
     myClock.addSpecialSchedule(Schedule(hours: "19-22"), "只要不加班，快活到天亮，现在是 {}");
     myClock.addSpecialSchedule(
         Schedule(days: 15, months: 4), "今天是闹钟模块诞生的日子，值得纪念");
+    myClock.addSpecialSchedule(
+        Schedule(days: 27, months: 4), "今天是闹钟模块开发者的生日，快祝他生日快乐吧！");
+    myClock.addSpecialSchedule(
+        Schedule(days: 18, months: 5), "今天是开发者爱女的生日，快祝小公主生日快乐吧！");
+    myClock.addSpecialSchedule(
+        Schedule(days: 15, months: 8), "今天是开发者爱妻的生日，快祝她生日快乐吧！");
 
     getAlarmCache();
     myClock.canQuarterAlarm = Application.isQuarterAlarm;
