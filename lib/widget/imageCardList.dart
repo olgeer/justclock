@@ -19,9 +19,9 @@ import 'package:flutter/rendering.dart';
 /// to the descendents.
 class ImageCardList extends StatelessWidget {
   ImageCardList(
-      {Key key,
-        @required this.map,
-        @required this.displayNameTag,
+      {Key? key,
+        required this.map,
+        required this.displayNameTag,
         this.height = 200.0,
         this.width = 200.0,
         this.titleColor = Colors.black,
@@ -38,8 +38,7 @@ class ImageCardList extends StatelessWidget {
         this.margin = const EdgeInsets.all(8.0),
         this.reverse = false,
         this.onTap})
-      : assert(map != null),
-        assert(height >= 50.0),
+      : assert(height >= 50.0),
         assert(width >= 50.0),
         assert(!(fontSize < 0)),
         assert(!(borderRadius < 0)),
@@ -128,21 +127,21 @@ class ImageCardList extends StatelessWidget {
 
   /// onTap callback function
   /// Defaults to null.
-  final _OnTapFunction onTap;
+  final _OnTapFunction? onTap;
 
   /// Find [_FieldsWidget] up in the widget tree and access the card list instance.
   /// This returns the current state of [ImageCardList].
-  static ImageCardList of(BuildContext context) {
+  static ImageCardList? of(BuildContext context) {
     return context
         .dependOnInheritedWidgetOfExactType<_FieldsWidget>()
-        .imageCardList;
+        ?.imageCardList;
   }
 
   @override
   Widget build(BuildContext context) {
     /// The [List] object will hold the map of key,value pairs which in this
     /// case are image title and image path. The https:// paths won't be checked here.
-    List<_ImageCard> list = List();
+    List<_ImageCard> list = [];
 
     /// If 'dispalyNameTag' is true, form [_ImageCard] list
     /// with imagePath and imageTitle.
@@ -195,7 +194,7 @@ class ImageCardList extends StatelessWidget {
 /// An image [Card] that holds [_ImageView] and [Title] (image name) in a [Column]
 /// 'imagePath' could be one from assets or from network
 class _ImageCard extends StatelessWidget {
-  _ImageCard({Key key, @required this.imagePath, this.imageTitle, this.onTap})
+  _ImageCard({Key? key, required this.imagePath, this.imageTitle="", this.onTap})
       : super(key: key);
 
   /// @required
@@ -208,7 +207,7 @@ class _ImageCard extends StatelessWidget {
 
   /// onTap callback function
   /// Defaults to null.
-  final _OnTapFunction onTap;
+  final _OnTapFunction? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -218,7 +217,7 @@ class _ImageCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (onTap != null) {
-          onTap(
+          onTap!(
               imageTitle,
               imagePath.contains("http")
                   ? Image.network(imagePath).image
@@ -226,7 +225,7 @@ class _ImageCard extends StatelessWidget {
         }
       },
       child: Card(
-        color: hicl.color,
+        color: hicl!.color,
         semanticContainer: hicl.semanticContainer,
         shadowColor: hicl.shadowColor,
         elevation: hicl.elevation,
@@ -282,9 +281,9 @@ class _FieldsWidget extends InheritedWidget {
   final ImageCardList imageCardList;
 
   _FieldsWidget({
-    Key key,
-    @required this.imageCardList,
-    @required Widget child,
+    Key? key,
+    required this.imageCardList,
+    required Widget child,
   }) : super(key: key, child: child);
 
   @override
@@ -294,8 +293,8 @@ class _FieldsWidget extends InheritedWidget {
 /// A [Container] with [BoxDecoration] holding the actual image.
 class _ImageView extends StatelessWidget {
   _ImageView({
-    Key key,
-    @required this.imagePath,
+    Key? key,
+    required this.imagePath,
     this.height = 200.0,
     this.width = 200.0,
   }) : super(key: key);

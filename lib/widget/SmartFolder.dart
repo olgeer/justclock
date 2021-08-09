@@ -4,19 +4,19 @@ import 'package:flutter/material.dart';
 class SmartFolder extends StatefulWidget {
   final Widget child; //子组件 @required
   final List<Widget> children; //折叠内容
-  final Widget tile; //尾部折叠指示组件 - 默认[]
+  final Widget? tile; //尾部折叠指示组件 - 默认[]
   final int duration; //折叠时长 - 默认200 ms
   final double tileOffsetRight; //指示组件右边距 - 默认10
   final Color tileColor; //指示组件颜色 - 默认为黑色
   final Curve foldCurve; //动画曲线 - 默认Curves.easeInToLinear
-  final ValueChanged<bool> onExpansionChanged; //折叠回调
+  final ValueChanged<bool>? onExpansionChanged; //折叠回调
   final bool initiallyExpanded; // 是否一开始展开
-  final String groupName;
+  final String? groupName;
 
 
   SmartFolder(
-      {Key key,
-      @required this.child,
+      {Key? key,
+      required this.child,
       this.initiallyExpanded = false,
       this.tile,
       this.foldCurve = Curves.easeInToLinear,
@@ -40,21 +40,21 @@ class _SmartFolderState extends State<SmartFolder>
 
   bool get isFirst => _crossFadeState == CrossFadeState.showFirst;
 
-  AnimationController _controller;
-  Animation _rotate;
+  late AnimationController _controller;
+  late Animation _rotate;
   double _rad = 0;
   bool _rotated = false;
 
   @override
   void initState() {
     super.initState();
-    if(widget.groupName!=null && widget.groupName.isNotEmpty){
+    if(widget.groupName!=null && widget.groupName!.isNotEmpty){
       if(!groupState.containsKey(widget.groupName)) {
         Map<Key, bool>entry = Map();
-        entry[widget.key] = widget.initiallyExpanded;
-        groupState[widget.groupName] = entry;
+        entry[widget.key!] = widget.initiallyExpanded;
+        groupState[widget.groupName!] = entry;
       }else{
-        groupState[widget.groupName].putIfAbsent(widget.key, ()=>widget.initiallyExpanded);
+        groupState[widget.groupName]!.putIfAbsent(widget.key!, ()=>widget.initiallyExpanded);
       }
     }
     _controller = AnimationController(
@@ -111,7 +111,7 @@ class _SmartFolderState extends State<SmartFolder>
   void _togglePanel() {
     _controller.reset();
     _controller.forward();
-    if (widget.onExpansionChanged != null) widget.onExpansionChanged(isFirst);
+    if (widget.onExpansionChanged != null) widget.onExpansionChanged!(isFirst);
     setState(() {
       _crossFadeState =
           !isFirst ? CrossFadeState.showFirst : CrossFadeState.showSecond;

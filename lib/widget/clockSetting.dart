@@ -27,8 +27,8 @@ class SettingComponent extends StatefulWidget {
 class SettingComponentState extends State<SettingComponent> {
   final Logger logger = log.newInstanse(logTag: "SettingComponent");
   var skinList;
-  Map<String, String> skinMap;
-  String skinPkgUrl;
+  late Map<String, String> skinMap;
+  late String skinPkgUrl;
   final Color themeColor = Colors.teal.shade300;
   final TextStyle settingChapterStyle =
       TextStyle(fontSize: 20, color: Colors.teal.shade300);
@@ -49,8 +49,7 @@ class SettingComponentState extends State<SettingComponent> {
   void loadSkinList() async {
     String skinJson = utf8.decode((await getUrlFile(
       "${Setting.apiDomain}www/skinlist.json",
-    ))
-        .bodyBytes);
+    ))?.bodyBytes??[]);
     // showToast(skinJson);
 
     skinList = json.decode(skinJson);
@@ -64,7 +63,7 @@ class SettingComponentState extends State<SettingComponent> {
     setState(() {});
   }
 
-  void changeSkin(String skinTitle, ImageProvider sample) async {
+  void changeSkin(String skinTitle, ImageProvider<dynamic> sample) async {
     //防止二次提交
     setState(() {
       isProcessing = true;
@@ -78,28 +77,35 @@ class SettingComponentState extends State<SettingComponent> {
         if (!File("$skinDir$skinName/config.json").existsSync() ||
             forceUpdate) {
           skinPkgUrl = "${Setting.apiDomain}skins/${m["file"]}";
-          String skinFile = await saveUrlFile(
+          String? skinFile = await saveUrlFile(
               "${Setting.apiDomain}skins/${m["file"]}",
               saveFileWithoutExt: "$skinDir$skinName");
 
-          //extract the archive file
-          final zipFile = File(skinFile);
-          final destinationDir = Directory(skinDir);
+          if(skinFile!=null) {
+            //extract the archive file
+            final zipFile = File(skinFile);
+            final destinationDir = Directory(skinDir);
 
-          try {
-            await ZipFile.extractToDirectory(
-                zipFile: zipFile, destinationDir: destinationDir);
-            zipFile.deleteSync();
-          } catch (e) {
-            print(e);
+            try {
+              await ZipFile.extractToDirectory(
+                  zipFile: zipFile, destinationDir: destinationDir);
+              zipFile.deleteSync();
+            } catch (e) {
+              print(e);
+            }
           }
         }
-        Application.defaultSkin = skinName;
-        Application.cache.setString(DefaultSkin, skinName);
 
-        showToast("皮肤已更换为$skinTitle");
-        Navigator.pop(
-            context, ClockEvent(ClockEventType.skinChange, value: skinName));
+        if(File("$skinDir$skinName/config.json").existsSync()){
+          Application.defaultSkin = skinName;
+          Application.cache.setString(DefaultSkin, skinName);
+
+          showToast("皮肤已更换为$skinTitle");
+          Navigator.pop(
+              context, ClockEvent(ClockEventType.skinChange, value: skinName));
+        }else{
+          showToast("皮肤[$skinName]文件下载或格式错误，无法更换。");
+        }
       }
     }
   }
@@ -205,16 +211,25 @@ class SettingComponentState extends State<SettingComponent> {
     }
   }
 
-  void upgradeApk() async {
+  void runUpgradeApk() async {
     //防止二次提交
     setState(() {
       isProcessing = true;
     });
 
-    showToast("正在升级应用，请稍后。。。");
-    String apkFile = await saveUrlFile(Setting.androidAppUrl);
-    Vibration.vibrate();
-    await installApk(apkFile, AppId);
+    if(Setting.androidAppUrl!=null){
+      showToast("正在升级应用，请稍后。。。");
+      Vibration.vibrate();
+      // String? apkFile = await saveUrlFile(Setting.androidAppUrl!);
+      // if(apkFile!=null) {
+      //   await installApk(apkFile, AppId);
+      // }else{
+      //   showToast("升级文件下载错误，请稍后再试！");
+      // }
+      await upgradeApk(Setting.androidAppUrl!,fileName: "app.apk");
+    }else{
+      showToast("未找到应用升级路径，请稍后再试！");
+    }
   }
 
   List<int> fromTimeRange(TimeRange t) {
@@ -229,7 +244,7 @@ class SettingComponentState extends State<SettingComponent> {
     return hours;
   }
 
-  void setAlarmCache({bool isQuarterAlarm,bool isHalfAlarm,bool isHourAlarm}){
+  void setAlarmCache({bool? isQuarterAlarm,bool? isHalfAlarm,bool? isHourAlarm}){
     if(isQuarterAlarm!=null){
       Application.isQuarterAlarm=isQuarterAlarm;
       Application.cache.setBool(QuarterAlarmTag, isQuarterAlarm);
@@ -338,7 +353,7 @@ class SettingComponentState extends State<SettingComponent> {
                 ListTile(
                     title: Text("报时设置"),
                     trailing: Container(
-                      width: 200,
+                      width: 230,
                         child: Row(children: [
                       Checkbox(value: Application.isQuarterAlarm, onChanged: (v)=>setState(()=>setAlarmCache(isQuarterAlarm: v))),
                           Text("刻钟"),
@@ -400,7 +415,7 @@ class SettingComponentState extends State<SettingComponent> {
                     size: 32,
                     color: Colors.greenAccent,
                   ),
-                  onTap: isProcessing ? null : upgradeApk,
+                  onTap: isProcessing ? null : runUpgradeApk,
                 ),
               ],
             ),

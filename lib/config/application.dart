@@ -3,10 +3,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 //全局变量
 class Application {
-  static SharedPreferences cache;
-  static String defaultSkin;
-  static String appRootPath;
-  static Size screenSize;
+  static late SharedPreferences cache;
+  static String? defaultSkin;
+  static late String appRootPath;
+  static late Size screenSize;
 
   static bool stopListen=false;
   static bool isDark=false;

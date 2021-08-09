@@ -11,12 +11,12 @@ class Setting {
   static String configDomain = "http://olgeer.3322.org:8888/justclock/setting.json";
   static String apiDomain="http://olgeer.3322.org:8888/justclock/";
   static String androidVersion = "1.0";
-  static String androidUpdateLog;
+  static String? androidUpdateLog;
   static String iosVersion = "1.0";
-  static String iosUpdateLog;
+  static String? iosUpdateLog;
   static bool isForceUpdate = false;
-  static String androidAppUrl;
-  static String iosAppUrl;
+  static String? androidAppUrl;
+  static String? iosAppUrl;
 
   static Future loadSetting() async {
     var settingStr =

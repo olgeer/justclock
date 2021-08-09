@@ -8,10 +8,11 @@ import 'package:cron/cron.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hash/hash.dart' as hash;
 import 'package:http/http.dart';
-import 'package:install_apk_plugin/install_apk_plugin.dart';
+// import 'package:install_apk_plugin/install_apk_plugin.dart';
 import 'package:justclock/pkg/logger.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:r_upgrade/r_upgrade.dart';
 
 typedef voidProc = void Function();
 typedef eventCall = void Function(dynamic value);
@@ -63,16 +64,16 @@ String str2hex(String str) {
     'F'
   ];
   String hexStr = "";
-  if (str != null) {
+  // if (str != null) {
     for (int i = 0; i < str.length; i++) {
       int ch = str.codeUnitAt(i);
       hexStr += hex2char[(ch & 0xF0) >> 4];
       hexStr += hex2char[ch & 0x0F];
 //      logger.fine("hexStr:[$hexStr]");
     }
-  } else {
-    throw new Exception("Param string is null");
-  }
+  // } else {
+  //   throw new Exception("Param string is null");
+  // }
   return hexStr;
 }
 
@@ -96,14 +97,14 @@ String Uint8List2HexStr(Uint8List uint8list) {
     'F'
   ];
   String hexStr = "";
-  if (uint8list != null) {
+  // if (uint8list != null) {
     for (int i in uint8list) {
       hexStr += hex2char[(i & 0xF0) >> 4];
       hexStr += hex2char[i & 0x0F];
     }
-  } else {
-    throw new Exception("Param Uint8List is null");
-  }
+  // } else {
+  //   throw new Exception("Param Uint8List is null");
+  // }
   return hexStr;
 }
 
@@ -152,7 +153,7 @@ String size2human(double size) {
     String format = s.toStringAsFixed(1);
     return format + unit;
   }
-  return null;
+  return "unknow";
 }
 
 String getFileName(String path) {
@@ -172,7 +173,7 @@ String getFileExtname(String path) {
   return p.extension(path);
 }
 
-String readFileString(String filepath) {
+String? readFileString(String filepath) {
   File readFile = File(filepath);
   if (readFile.existsSync()) {
     return readFile.readAsStringSync(encoding: Utf8Codec());
@@ -180,8 +181,8 @@ String readFileString(String filepath) {
   return null;
 }
 
-void writeFileString(String filepath, String contents) async {
-  File writeFile = await File(filepath);
+void writeFileString(String filepath, String contents) {
+  File writeFile = File(filepath);
   if (!writeFile.existsSync()) {
     writeFile.createSync(recursive: true);
   }
@@ -193,8 +194,8 @@ String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
 String dateTime() => DateTime.now().toString();
 int nowInt() => DateTime.now().millisecondsSinceEpoch;
 
-Future<String> sha512(String filePath) async {
-  File orgFile = await File(filePath);
+Future<String?> sha512(String filePath) async {
+  File orgFile = File(filePath);
   if (!orgFile.existsSync()) return null;
 
   Uint8List orgBytes = orgFile.readAsBytesSync();
@@ -203,8 +204,8 @@ Future<String> sha512(String filePath) async {
   return Uint8List2HexStr(shaBytes);
 }
 
-List<String> objectListToStringList(List<dynamic> listObject) {
-  List<String> newListString;
+List<String>? objectListToStringList(List<dynamic>? listObject) {
+  List<String>? newListString;
   if (listObject != null) {
     newListString = [];
     for (dynamic obj in listObject) {
@@ -214,7 +215,7 @@ List<String> objectListToStringList(List<dynamic> listObject) {
   return newListString;
 }
 
-String md5(String str) {
+String? md5(String? str) {
   if (str == null) return null;
   Uint8List md5Bytes = hash.MD5().update(str.codeUnits).digest();
   //logger.fine("md5($str)=${md5Bytes}");
@@ -272,12 +273,12 @@ void setRotateMode({bool canRotate = true}) {
   // Logger().debug("NovelReader", "canRotate:$canRotate");
 }
 
-Future<Response> getUrlFile(String url,
+Future<Response?> getUrlFile(String url,
     {int retry = 3,
     int seconds = 3,
-    eventCall onSuccess,
-    eventCall onError}) async {
-  Response tmp;
+    eventCall? onSuccess,
+    eventCall? onError}) async {
+  Response? tmp;
 
   do {
     try {
@@ -286,7 +287,7 @@ Future<Response> getUrlFile(String url,
       print("get file error:$e");
       await Future.delayed(Duration(seconds: seconds));
     }
-    if (tmp.statusCode == 200 && onSuccess != null) onSuccess(tmp);
+    if (tmp?.statusCode == 200 && onSuccess != null) onSuccess(tmp);
   } while ((tmp == null || tmp.statusCode != 200) && --retry > 0);
 
   if (tmp?.statusCode != 200 && onError != null) onError(tmp?.statusCode);
@@ -298,7 +299,7 @@ Directory getCurrentDir() {
 }
 
 Future<String> initPath() async {
-  Directory tempDir = Platform.isIOS
+  Directory? tempDir = Platform.isIOS
       ? await getLibraryDirectory()
       : Platform.isAndroid
           ? await getExternalStorageDirectory()
@@ -306,16 +307,16 @@ Future<String> initPath() async {
   return tempDir?.path ?? "";
 }
 
-Future<String> saveUrlFile(String url,
-    {String saveFileWithoutExt,
+Future<String?> saveUrlFile(String url,
+    {String? saveFileWithoutExt,
     int retry = 3,
     int seconds = 3,
-    eventCall onSuccess,
-    eventCall onError}) async {
-  Response tmpResp = await getUrlFile(url, retry: retry, seconds: seconds);
-  largePrint(tmpResp.headers);
+    eventCall? onSuccess,
+    eventCall? onError}) async {
+  Response? tmpResp = await getUrlFile(url, retry: retry, seconds: seconds);
+  largePrint(tmpResp?.headers);
   // if(tmpResp!=null && tmpResp.headers['Content-Length']!=null && int.parse(tmpResp.headers['Content-Length'])>0) {
-  if (tmpResp.bodyBytes.length > 0) {
+  if ((tmpResp?.bodyBytes.length??0) > 0) {
     List<String> tmpSpile = url.split("//")[1].split("/");
     String fileExt;
     if (tmpSpile.last.length > 0 && tmpSpile.last.split(".").length > 1) {
@@ -328,18 +329,18 @@ Future<String> saveUrlFile(String url,
       if (saveFileWithoutExt == null || saveFileWithoutExt.length == 0) {
         saveFileWithoutExt = genKey(lenght: 12);
       }
-      fileExt = tmpResp.headers['Content-Type'].split("/")[1];
+      fileExt = tmpResp?.headers['Content-Type']?.split("/")[1]??"bin";
     }
 
     File urlFile = File("$saveFileWithoutExt.$fileExt");
     if (urlFile.existsSync()) urlFile.deleteSync();
     urlFile.createSync(recursive: true);
-    urlFile.writeAsBytesSync(tmpResp.bodyBytes.toList(),
+    urlFile.writeAsBytesSync(tmpResp?.bodyBytes.toList()??[],
         mode: FileMode.write, flush: true);
     if (onSuccess != null) onSuccess(urlFile.path);
     return urlFile.path;
   }
-  if (onError != null) onError(tmpResp.statusCode);
+  if (onError != null) onError(tmpResp?.statusCode);
   return null;
 }
 
@@ -354,7 +355,7 @@ String save2File(String filePath, String content) {
   return saveFile.path;
 }
 
-String read4File(String filePath) {
+String? read4File(String filePath) {
   File readFile = File(filePath);
   if (readFile.existsSync()) {
     try {
@@ -413,34 +414,39 @@ String str2Regexp(String str) {
   return tmp;
 }
 
-String fixJsonFormat(String json) {
-  return json?.replaceAll("\\", "\\\\");
+String? fixJsonFormat(String json) {
+  return json.replaceAll("\\", "\\\\");
 }
 
-Future installApk(String _apkFilePath, String appId) async {
-  if (_apkFilePath.isEmpty) {
-    print('make sure the apk file is set');
-    return;
-  }
+// Future installApk(String _apkFilePath, String appId) async {
+//   if (_apkFilePath.isEmpty) {
+//     print('make sure the apk file is set');
+//     return;
+//   }
+//
+//   // Map<Permission, PermissionStatus> statuses = await [
+//   //   Permission.storage,
+//   // ].request();
+//
+//   // if (statuses[Permission.storage] == PermissionStatus.granted) {
+//   InstallPlugin.installApk(_apkFilePath, appId).then((result) {
+//     print('install apk $result');
+//   }).catchError((error) {
+//     print('install apk error: $error');
+//   });
+//   // } else {
+//   //   print('Permission request fail!');
+//   // }
+// }
 
-  // Map<Permission, PermissionStatus> statuses = await [
-  //   Permission.storage,
-  // ].request();
-
-  // if (statuses[Permission.storage] == PermissionStatus.granted) {
-  InstallPlugin.installApk(_apkFilePath, appId).then((result) {
-    print('install apk $result');
-  }).catchError((error) {
-    print('install apk error: $error');
-  });
-  // } else {
-  //   print('Permission request fail!');
-  // }
+Future<void> upgradeApk(String url,{String? fileName})async{
+  await RUpgrade.upgrade(
+      url,fileName: fileName, isAutoRequestInstall: true,useDownloadManager: true);
 }
 
 String languageCode2Text(String code) {
   Map<String, String> transMap = {"zh": "中文", "en": "English"};
-  return transMap[code];
+  return transMap[code]??"中文";
 }
 
 bool isWorkday(DateTime now) {
@@ -458,11 +464,11 @@ String int2Str(int value, {int width = 2}) {
 }
 
 ///按一定时间间隔重复执行processer方法，方法调用后立即执行processer方法，如millisecondInterval不为null则按此间隔继续执行
-void intervalAction(voidProc processer, {List<int> millisecondInterval}) {
+void intervalAction(voidProc? processer, {List<int>? millisecondInterval}) {
   if (processer != null) {
     processer();
     if (millisecondInterval?.isNotEmpty == true) {
-      for (int i in millisecondInterval) {
+      for (int i in millisecondInterval!) {
         Future.delayed(Duration(milliseconds: i), processer);
       }
     }

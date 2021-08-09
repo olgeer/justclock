@@ -5,9 +5,9 @@ class WidgetTextButton extends StatefulWidget {
   final Text label;
 
   const WidgetTextButton({
-    Key key,
-    @required this.widget,
-    @required this.label,
+    Key? key,
+    required this.widget,
+    required this.label,
   }) : super(key: key);
 
   @override

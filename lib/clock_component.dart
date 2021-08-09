@@ -24,10 +24,11 @@ class ClockComponentState extends State<ClockComponent>
     with WidgetsBindingObserver {
   final Logger logger = log.newInstanse(logTag: "JustClock");
   bool forceInit = false;
-  AlarmClock myClock;
-  DigitalClock clockWidget;
+  late AlarmClock myClock;
+  late Widget clockWidget;
   bool needFresh = true;
-  Cron cron;
+  late Cron cron;
+  late DigitalClockConfig clockConfig;
 
   DigitalClockConfig textClock = DigitalClockConfig(
     "TextClock",
@@ -182,11 +183,9 @@ class ClockComponentState extends State<ClockComponent>
     ),
   );
 
-  DigitalClockConfig clockConfig;
-
   @override
   void initState() {
-    WidgetsBinding.instance.addObserver(this); //添加观察者
+    WidgetsBinding.instance?.addObserver(this); //添加观察者
     // vibrate.init();
     //
     // sound.init();
@@ -253,6 +252,8 @@ class ClockComponentState extends State<ClockComponent>
         Schedule(days: 18, months: 5), "今天是开发者爱女的生日，快祝小公主生日快乐吧！");
     myClock.addSpecialSchedule(
         Schedule(days: 15, months: 8), "今天是开发者爱妻的生日，快祝她生日快乐吧！");
+    // myClock.addSpecialSchedule(
+    //     Schedule(days: 28, months: 6), "测试提醒信息");
 
     getAlarmCache();
     myClock.canQuarterAlarm = Application.isQuarterAlarm;
@@ -268,7 +269,7 @@ class ClockComponentState extends State<ClockComponent>
 
   @override
   void didChangeMetrics() {
-    Application.screenSize = WidgetsBinding.instance.window.physicalSize;
+    // Application.screenSize = WidgetsBinding.instance.window.physicalSize;
     needFresh = true;
     // print(screenSize);
   }
@@ -287,10 +288,16 @@ class ClockComponentState extends State<ClockComponent>
           Setting.isForceUpdate &&
           Platform.isAndroid) {
         // showToast(LocaleKeys.launch_forceUpgradeAlert.tr(),showInSec: 15);
-        showToast(Setting.androidUpdateLog, showInSec: 15);
-        String apkFile = await saveUrlFile(Setting.androidAppUrl);
+        showToast(Setting.androidUpdateLog??"优化用户体验", showInSec: 15);
+        // String? apkFile = await saveUrlFile(Setting.androidAppUrl!);
         Vibrate.littleShake();
-        await installApk(apkFile, AppId);
+        // if(apkFile!=null)
+        // {
+        //   await installApk(apkFile, AppId);
+        // }else{
+        //   showToast("更新文件下载错误，请稍后再试！");
+        // }
+        await upgradeApk(Setting.androidAppUrl!,fileName: "app.apk");
       }
     });
   }
@@ -305,7 +312,7 @@ class ClockComponentState extends State<ClockComponent>
             "${Application.appRootPath}/skins/${Application.defaultSkin}/config.json");
 
         if (clockConfigFile.existsSync()) {
-          clockConfig = DigitalClockConfig.fromFile(clockConfigFile);
+          clockConfig = DigitalClockConfig.fromFile(clockConfigFile)??textClock;
 
           // clockConfig=DigitalClockConfig.fromJson(flipClock.toString());
 
@@ -417,11 +424,9 @@ class ClockComponentState extends State<ClockComponent>
       screenSize = Size(screenSize.height, screenSize.width);
     }
     // logger.fine("Screen ${screenSize.toString()}");
+    clockWidget = newDigitalClock(needFresh);
     if (needFresh) {
-      clockWidget = newDigitalClock(needFresh);
       needFresh = false;
-    }else{
-      clockWidget = newDigitalClock(needFresh);
     }
     return Scaffold(
       body: Container(
