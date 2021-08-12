@@ -4,9 +4,8 @@ import 'dart:typed_data';
 import 'dart:math';
 import 'package:basic_utils/basic_utils.dart';
 import 'package:auto_orientation/auto_orientation.dart';
-import 'package:cron/cron.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:hash/hash.dart' as hash;
+// import 'package:hash/hash.dart' as hash;
 import 'package:http/http.dart';
 // import 'package:install_apk_plugin/install_apk_plugin.dart';
 import 'package:justclock/pkg/logger.dart';
@@ -194,15 +193,15 @@ String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
 String dateTime() => DateTime.now().toString();
 int nowInt() => DateTime.now().millisecondsSinceEpoch;
 
-Future<String?> sha512(String filePath) async {
-  File orgFile = File(filePath);
-  if (!orgFile.existsSync()) return null;
-
-  Uint8List orgBytes = orgFile.readAsBytesSync();
-  Uint8List shaBytes = hash.SHA512().update(orgBytes).digest();
-  // logger.fine("sha512($filePath)=[${shaBytes.toString()}]");
-  return Uint8List2HexStr(shaBytes);
-}
+// Future<String?> sha512(String filePath) async {
+//   File orgFile = File(filePath);
+//   if (!orgFile.existsSync()) return null;
+//
+//   Uint8List orgBytes = orgFile.readAsBytesSync();
+//   Uint8List shaBytes = hash.SHA512().update(orgBytes).digest();
+//   // logger.fine("sha512($filePath)=[${shaBytes.toString()}]");
+//   return Uint8List2HexStr(shaBytes);
+// }
 
 List<String>? objectListToStringList(List<dynamic>? listObject) {
   List<String>? newListString;
@@ -215,12 +214,12 @@ List<String>? objectListToStringList(List<dynamic>? listObject) {
   return newListString;
 }
 
-String? md5(String? str) {
-  if (str == null) return null;
-  Uint8List md5Bytes = hash.MD5().update(str.codeUnits).digest();
-  //logger.fine("md5($str)=${md5Bytes}");
-  return Uint8List2HexStr(md5Bytes);
-}
+// String? md5(String? str) {
+//   if (str == null) return null;
+//   Uint8List md5Bytes = hash.MD5().update(str.codeUnits).digest();
+//   //logger.fine("md5($str)=${md5Bytes}");
+//   return Uint8List2HexStr(md5Bytes);
+// }
 
 void largePrint(dynamic msg) {
   String str;

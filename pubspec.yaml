@@ -41,10 +41,10 @@ dependencies:
       ref: main
 #  digital_clock:
 #    path: ../digital_clock
-  hash:
-    git:
-      url: git://github.com/olgeer/hash.git
-      ref: main
+#  hash:
+#    git:
+#      url: git://github.com/olgeer/hash.git
+#      ref: main
 
 dev_dependencies:
   flutter_test:

@@ -27,7 +27,7 @@ class SettingComponent extends StatefulWidget {
 class SettingComponentState extends State<SettingComponent> {
   final Logger logger = log.newInstanse(logTag: "SettingComponent");
   var skinList;
-  late Map<String, String> skinMap;
+  Map<String, String>? skinMap;
   late String skinPkgUrl;
   final Color themeColor = Colors.teal.shade300;
   final TextStyle settingChapterStyle =
@@ -56,7 +56,7 @@ class SettingComponentState extends State<SettingComponent> {
     if (skinList != null && skinList["skin"] != null) {
       skinMap = Map<String, String>();
       for (var m in skinList["skin"]) {
-        skinMap.putIfAbsent(
+        skinMap!.putIfAbsent(
             m["title"], () => "${Setting.apiDomain}skins/${m["sample"]}");
       }
     }
@@ -314,7 +314,7 @@ class SettingComponentState extends State<SettingComponent> {
                         height: 100,
                         width: 100,
                         titleColor: themeColor,
-                        map: skinMap,
+                        map: skinMap??{},
                         displayNameTag: true,
                         onTap: isProcessing ? null : changeSkin,
                       )

@@ -37,60 +37,60 @@ class ClockComponentState extends State<ClockComponent>
     yearItem: ItemConfig(
       style: DateStyle.chinese.index,
       textStyle: TextStyle(fontSize: 9, color: Colors.white),
-      rect: Rect.fromCenter(center: Offset(-60, -30), width: 40, height: 10),
+      rect: Rect.fromCenter(center: Offset(-60, -36), width: 36, height: 12),
     ),
     monthItem: ItemConfig(
       style: DateStyle.chinese.index,
       textStyle: TextStyle(fontSize: 9, color: Colors.white),
-      rect: Rect.fromCenter(center: Offset(-20, -30), width: 40, height: 10),
+      rect: Rect.fromCenter(center: Offset(-20, -36), width: 36, height: 12),
     ),
     dayItem: ItemConfig(
       style: DateStyle.chinese.index,
       textStyle: TextStyle(fontSize: 9, color: Colors.white),
-      rect: Rect.fromCenter(center: Offset(20, -30), width: 40, height: 10),
+      rect: Rect.fromCenter(center: Offset(20, -36), width: 36, height: 12),
     ),
     weekdayItem: ItemConfig(
       style: DateStyle.chinese.index,
       textStyle: TextStyle(fontSize: 9, color: Colors.white),
-      rect: Rect.fromCenter(center: Offset(60, -30), width: 40, height: 10),
+      rect: Rect.fromCenter(center: Offset(60, -36), width: 36, height: 12),
     ),
     hourItem: ItemConfig(
       style: TimeStyle.number.index,
-      textStyle: TextStyle(fontSize: 50, color: Colours.lightGoldenRodYellow),
-      rect: Rect.fromCenter(center: Offset(-33, 0), width: 60, height: 48),
+      textStyle: TextStyle(fontSize: 48, color: Colours.lightGoldenRodYellow),
+      rect: Rect.fromCenter(center: Offset(-40, 0), width: 64, height: 56),
     ),
     minuteItem: ItemConfig(
       style: TimeStyle.number.index,
-      textStyle: TextStyle(fontSize: 50, color: Colours.lightGoldenRodYellow),
-      rect: Rect.fromCenter(center: Offset(47, 0), width: 60, height: 48),
+      textStyle: TextStyle(fontSize: 48, color: Colours.lightGoldenRodYellow),
+      rect: Rect.fromCenter(center: Offset(40, 0), width: 64, height: 56),
     ),
     tiktokItem: ItemConfig(
         style: TikTokStyle.text.index,
-        textStyle: TextStyle(fontSize: 50, color: Colours.lightGoldenRodYellow),
-        rect: Rect.fromCenter(center: Offset(7, 0), width: 14, height: 48)),
+        textStyle: TextStyle(fontSize: 48, color: Colours.lightGoldenRodYellow),
+        rect: Rect.fromCenter(center: Offset(0, 0), width: 14, height: 56)),
     h12Item: ItemConfig(
       style: H12Style.text.index,
       textStyle: TextStyle(fontSize: 9, color: Colours.lightGoldenRodYellow),
-      rect: Rect.fromCenter(center: Offset(-73, 17), width: 20, height: 12),
+      rect: Rect.fromCenter(center: Offset(-73, 15), width: 20, height: 12),
     ),
     settingItem: ItemConfig(
       style: ActionStyle.icon.index,
-      rect: Rect.fromCenter(center: Offset(86, -29), width: 14, height: 12),
+      rect: Rect.fromCenter(center: Offset(86, -36), width: 14, height: 12),
       imgs: [Icons.settings.codePoint.toString()],
     ),
     exitItem: ItemConfig(
       style: ActionStyle.empty.index,
-      rect: Rect.fromCenter(center: Offset(47, 0), width: 60, height: 46),
+      rect: Rect.fromCenter(center: Offset(47, 0), width: 60, height: 50),
     ),
     backgroundColor: Colors.black,
     foregroundColor: Colors.greenAccent,
     // backgroundImage: "assets/clock/bg.png",
     // bodyImage: "assets/clock/body.png",
-    timeType: TimeType.h24,
+    timeType: TimeType.h12,
   );
 
   DigitalClockConfig flipClock2 = DigitalClockConfig(
-    "DigitalClock",
+    "DigitalFlipClock",
     height: 360,
     width: 640,
     foregroundColor: Colors.grey,
@@ -102,7 +102,7 @@ class ClockComponentState extends State<ClockComponent>
       imgs: ["body2.png"],
     ),
     timeType: TimeType.h12,
-    skinBasePath: "DigitalClock",
+    skinBasePath: "DigitalFlipClock",
     hourItem: ItemConfig(
         style: TimeStyle.flip.index,
         rect: Rect.fromCenter(center: Offset(-146, 9), width: 222, height: 239),
@@ -148,7 +148,7 @@ class ClockComponentState extends State<ClockComponent>
       imgs: ["body.png"],
     ),
     timeType: TimeType.h12,
-    skinBasePath: "assets:skin/SimpleFlipClock/",
+    skinBasePath: "SimpleFlipClock",
     hourItem: ItemConfig(
         style: TimeStyle.flip.index,
         rect: Rect.fromCenter(center: Offset(-119, 1), width: 222, height: 239),
@@ -190,14 +190,14 @@ class ClockComponentState extends State<ClockComponent>
     //
     // sound.init();
 
-    AutoOrientation.landscapeAutoMode();
+    // AutoOrientation.landscapeAutoMode();
 
     checkUpgrade();
     reloadConfig();
-    // clockConfig=textClock;
-    // clockConfig=flipClock3;
+    clockConfig=textClock;
+    // clockConfig=flipClock2;
     // clockConfig.skinBasePath =
-    // "${Application.appRootPath}/skins/${flipClock3.skinBasePath}/";
+    // "${Application.appRootPath}/skins/${flipClock2.skinBasePath}/";
 
     // largePrint(textClock);
     // largePrint(flipClock);
@@ -336,7 +336,7 @@ class ClockComponentState extends State<ClockComponent>
 
   @override
   void dispose() {
-    AutoOrientation.fullAutoMode();
+    // AutoOrientation.fullAutoMode();
     Wakelock.disable();
     myClock.dispose();
     super.dispose();
@@ -402,9 +402,10 @@ class ClockComponentState extends State<ClockComponent>
 
   Widget newDigitalClock(bool fresh) {
     Size screenSize = MediaQuery.of(context).size;
-    if (screenSize.height > screenSize.width) {
-      screenSize = Size(screenSize.height, screenSize.width);
-    }
+    //  保持宽高摆正
+    // if (screenSize.height > screenSize.width) {
+    //   screenSize = Size(screenSize.height, screenSize.width);
+    // }
     // logger.fine("Screen ${screenSize.toString()}");
 
     return DigitalClock(
@@ -420,10 +421,11 @@ class ClockComponentState extends State<ClockComponent>
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    if (screenSize.height > screenSize.width) {
-      screenSize = Size(screenSize.height, screenSize.width);
-    }
-    // logger.fine("Screen ${screenSize.toString()}");
+    //  确保横屏显示
+    // if (screenSize.height > screenSize.width) {
+    //   screenSize = Size(screenSize.height, screenSize.width);
+    // }
+    logger.fine("Screen ${screenSize.toString()}");
     clockWidget = newDigitalClock(needFresh);
     if (needFresh) {
       needFresh = false;
@@ -433,7 +435,7 @@ class ClockComponentState extends State<ClockComponent>
         height: screenSize.height,
         width: screenSize.width,
         alignment: Alignment.center,
-        color: Colors.grey,
+        color: clockConfig.backgroundColor,
         child: clockWidget,
       ),
     );
