@@ -91,13 +91,13 @@ packages:
       name: cron
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.3.1"
+    version: "0.3.2"
   digital_clock:
     dependency: "direct main"
     description:
       path: "."
       ref: main
-      resolved-ref: "35b52b7935117e059e474545a2cc16aa09a6a539"
+      resolved-ref: ea31db9bbd2bf3446d7825b191a1ab798a6c38fa
       url: "git://github.com/olgeer/digital_clock.git"
     source: git
     version: "2.0.0"

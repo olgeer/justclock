@@ -125,7 +125,7 @@ class SettingComponentState extends State<SettingComponent> {
         ClockLabel.fromTime(time: TimeOfDay(hour: 18, minute: 0), text: "回家")
       ],
       start: TimeOfDay(hour: 8, minute: 0),
-      end: TimeOfDay(hour: 17, minute: 0),
+      end: TimeOfDay(hour: 8, minute: 0),
       interval: Duration(hours: 1),
       ticks: 8,
       strokeColor: Theme.of(context).primaryColor.withOpacity(0.5),
@@ -218,7 +218,7 @@ class SettingComponentState extends State<SettingComponent> {
     });
 
     if(Setting.androidAppUrl!=null){
-      showToast("正在升级应用，请稍后。。。");
+      showToast("正在升级应用，请稍候。。。");
       Vibration.vibrate();
       // String? apkFile = await saveUrlFile(Setting.androidAppUrl!);
       // if(apkFile!=null) {

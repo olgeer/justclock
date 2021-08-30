@@ -66,7 +66,7 @@ flutter:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
   assets:
-    - assets/voices/
+    - assets/sounds/
 #    - skin/SimpleFlipClock/
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -194,7 +194,7 @@ class ClockComponentState extends State<ClockComponent>
 
     checkUpgrade();
     reloadConfig();
-    clockConfig=textClock;
+    // clockConfig=textClock;
     // clockConfig=flipClock2;
     // clockConfig.skinBasePath =
     // "${Application.appRootPath}/skins/${flipClock2.skinBasePath}/";
@@ -222,11 +222,10 @@ class ClockComponentState extends State<ClockComponent>
         newSchedule: Schedule(
           minutes: [0, 15, 30, 45],
         ),
-        quarterAlarmSound: "assets/voices/钟琴颤音.mp3",
-        halfAlarmSound: "assets/voices/短促欢愉.mp3",
-        hourAlarmSound: "assets/voices/座钟报时.mp3",
+        quarterAlarmSound: "assets/sounds/钟琴颤音.mp3",
+        halfAlarmSound: "assets/sounds/短促欢愉.mp3",
+        hourAlarmSound: "assets/sounds/座钟报时.mp3",
         noSoundSchedule: Schedule(hours: [23, 0, 1, 2, 3, 4, 5, 6]),
-        noWakeLockSchedule: Schedule(hours: "8-15", weekdays: "1-5"),
         sleepEnableAction: () =>
             logger.fine("sleepEnableAction() run ${Wakelock.disable()}"),
         sleepDisableAction: () =>
