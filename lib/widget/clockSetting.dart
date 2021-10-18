@@ -244,18 +244,30 @@ class SettingComponentState extends State<SettingComponent> {
     return hours;
   }
 
-  void setAlarmCache({bool? isQuarterAlarm,bool? isHalfAlarm,bool? isHourAlarm}){
+  void setAlarmCache({bool? isQuarterAlarm,bool? isHalfAlarm,bool? isHourAlarm,bool? enableVibrate,bool? enableFlash,bool? enableSound}){
     if(isQuarterAlarm!=null){
-      Application.isQuarterAlarm=isQuarterAlarm;
+      Application.myClock!.canQuarterAlarm=isQuarterAlarm;
       Application.cache.setBool(QuarterAlarmTag, isQuarterAlarm);
     }
     if(isHalfAlarm!=null){
-      Application.isHalfAlarm=isHalfAlarm;
+      Application.myClock!.canHalfAlarm=isHalfAlarm;
       Application.cache.setBool(HalfAlarmTag, isHalfAlarm);
     }
     if(isHourAlarm!=null){
-      Application.isHourAlarm=isHourAlarm;
+      Application.myClock!.canHourAlarm=isHourAlarm;
       Application.cache.setBool(HourAlarmTag, isHourAlarm);
+    }
+    if(enableSound!=null){
+      Application.myClock!.enableAlarmSound=enableSound;
+      Application.cache.setBool(EnableSoundTag, enableSound);
+    }
+    if(enableFlash!=null){
+      Application.myClock!.enableFlashLamp=enableFlash;
+      Application.cache.setBool(EnableFlashTag, enableFlash);
+    }
+    if(enableVibrate!=null){
+      Application.myClock!.enableVibrate=enableVibrate;
+      Application.cache.setBool(EnableVibrateTag, enableVibrate);
     }
   }
 
@@ -355,13 +367,25 @@ class SettingComponentState extends State<SettingComponent> {
                     trailing: Container(
                       width: 230,
                         child: Row(children: [
-                      Checkbox(value: Application.isQuarterAlarm, onChanged: (v)=>setState(()=>setAlarmCache(isQuarterAlarm: v))),
+                      Checkbox(value: Application.myClock!.canQuarterAlarm, onChanged: (v)=>setState(()=>setAlarmCache(isQuarterAlarm: v))),
                           Text("刻钟"),
-                      Checkbox(value: Application.isHalfAlarm, onChanged: (v)=>setState(()=>setAlarmCache(isHalfAlarm: v))),
+                      Checkbox(value: Application.myClock!.canHalfAlarm, onChanged: (v)=>setState(()=>setAlarmCache(isHalfAlarm: v))),
                           Text("半点"),
-                      Checkbox(value: Application.isHourAlarm, onChanged: (v)=>setState(()=>setAlarmCache(isHourAlarm: v))),
+                      Checkbox(value: Application.myClock!.canHourAlarm, onChanged: (v)=>setState(()=>setAlarmCache(isHourAlarm: v))),
                           Text("整点"),
                     ],))),
+                ListTile(
+                    title: Text("提醒方式"),
+                    trailing: Container(
+                        width: 230,
+                        child: Row(children: [
+                          Checkbox(value: Application.myClock!.enableVibrate, onChanged: (v)=>setState(()=>setAlarmCache(enableVibrate: v))),
+                          Text("震动"),
+                          Checkbox(value: Application.myClock!.enableFlashLamp, onChanged: (v)=>setState(()=>setAlarmCache(enableFlash: v))),
+                          Text("闪光灯"),
+                          Checkbox(value: Application.myClock!.enableAlarmSound, onChanged: (v)=>setState(()=>setAlarmCache(enableSound: v))),
+                          Text("振铃"),
+                        ],))),
                 Divider(
                   color: Colors.grey,
                   thickness: 1.0,

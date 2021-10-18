@@ -29,4 +29,7 @@ final String ShowIntroTag = "System.ShowIntro";
 final String QuarterAlarmTag = "System.CanQuarterAlarm";
 final String HalfAlarmTag = "System.CanHalfAlarm";
 final String HourAlarmTag = "System.CanHourAlarm";
+final String EnableSoundTag = "System.EnableSound";
+final String EnableFlashTag = "System.EnableFlash";
+final String EnableVibrateTag = "System.EnableVibrate";
 

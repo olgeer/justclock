@@ -1,3 +1,4 @@
+import 'package:digital_clock/digital_clock.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,10 +25,6 @@ class Application {
   ///每次启动软件时只进行一次
   static bool isUpdated = false;
 
-  static bool isQuarterAlarm=true;
-  static bool isHalfAlarm=true;
-  static bool isHourAlarm=true;
-
   static bool showIntro=true;
   static bool appCanUpgrade=false;
   static bool hasVibrator=false;
@@ -35,4 +32,6 @@ class Application {
   static bool hasCustomVibrationsSupport=false;
   static bool hasLamp=false;
   static bool comfortableGreeting=true;
+
+  static AlarmClock? myClock;
 }

@@ -24,7 +24,7 @@ class ClockComponentState extends State<ClockComponent>
     with WidgetsBindingObserver {
   final Logger logger = log.newInstanse(logTag: "JustClock");
   bool forceInit = false;
-  late AlarmClock myClock;
+  
   late Widget clockWidget;
   bool needFresh = true;
   late Cron cron;
@@ -218,7 +218,7 @@ class ClockComponentState extends State<ClockComponent>
     //       // weekdays: [1, 2, 3, 4, 5],
     //     ),
     //     clockAlert);
-    myClock = AlarmClock(
+    Application.myClock = AlarmClock(
         newSchedule: Schedule(
           minutes: [0, 15, 30, 45],
         ),
@@ -231,39 +231,36 @@ class ClockComponentState extends State<ClockComponent>
         sleepDisableAction: () =>
             logger.fine("sleepDisableAction() run ${Wakelock.enable()}"));
 
-    myClock.addSpecialSchedule(
+    Application.myClock!.addSpecialSchedule(
         Schedule(hours: "2-5"), "已经 {} 了，熬夜看书不是个好习惯，赶紧睡吧");
-    myClock.addSpecialSchedule(
+    Application.myClock!.addSpecialSchedule(
         Schedule(hours: [23, 0, 1]), "夜猫子，不要看太晚了，已经 {} 了");
-    myClock.addSpecialSchedule(Schedule(hours: "6-8"), "早起读书精神爽，现在是 {} 了");
-    myClock.addSpecialSchedule(Schedule(hours: 9), "抓紧时间上班吧，已经 {} 了");
-    myClock.addSpecialSchedule(
+    Application.myClock!.addSpecialSchedule(Schedule(hours: "6-8"), "早起读书精神爽，现在是 {} 了");
+    Application.myClock!.addSpecialSchedule(Schedule(hours: 9), "抓紧时间上班吧，已经 {} 了");
+    Application.myClock!.addSpecialSchedule(
         Schedule(hours: [10, 11, 14, 15, 16, 17]), "上班摸鱼可不是好习惯，现在是 {}");
-    myClock.addSpecialSchedule(Schedule(hours: 12), "现在是 {}，赶紧吃饭去吧");
-    myClock.addSpecialSchedule(Schedule(hours: 13), "现在是 {}，午休时间哦，眯一会儿吧");
-    myClock.addSpecialSchedule(Schedule(hours: 18), "现在是 {}，总算下班了");
-    myClock.addSpecialSchedule(Schedule(hours: "19-22"), "只要不加班，快活到天亮，现在是 {}");
-    myClock.addSpecialSchedule(
+    Application.myClock!.addSpecialSchedule(Schedule(hours: 12), "现在是 {}，赶紧吃饭去吧");
+    Application.myClock!.addSpecialSchedule(Schedule(hours: 13), "现在是 {}，午休时间哦，眯一会儿吧");
+    Application.myClock!.addSpecialSchedule(Schedule(hours: 18), "现在是 {}，总算下班了");
+    Application.myClock!.addSpecialSchedule(Schedule(hours: "19-22"), "只要不加班，快活到天亮，现在是 {}");
+    Application.myClock!.addSpecialSchedule(
         Schedule(days: 15, months: 4), "今天是闹钟模块诞生的日子，值得纪念");
-    myClock.addSpecialSchedule(
+    Application.myClock!.addSpecialSchedule(
         Schedule(days: 27, months: 4), "今天是闹钟模块开发者的生日，快祝他生日快乐吧！");
-    myClock.addSpecialSchedule(
+    Application.myClock!.addSpecialSchedule(
         Schedule(days: 18, months: 5), "今天是开发者爱女的生日，快祝小公主生日快乐吧！");
-    myClock.addSpecialSchedule(
+    Application.myClock!.addSpecialSchedule(
         Schedule(days: 15, months: 8), "今天是开发者爱妻的生日，快祝她生日快乐吧！");
-    // myClock.addSpecialSchedule(
+    // Application.myClock!.addSpecialSchedule(
     //     Schedule(days: 28, months: 6), "测试提醒信息");
 
     getAlarmCache();
-    myClock.canQuarterAlarm = Application.isQuarterAlarm;
-    myClock.canHalfAlarm = Application.isHalfAlarm;
-    myClock.canHourAlarm = Application.isHourAlarm;
   }
 
   void getAlarmCache(){
-    Application.isQuarterAlarm=Application.cache.getBool(QuarterAlarmTag)??true;
-    Application.isHalfAlarm=Application.cache.getBool(HalfAlarmTag)??true;
-    Application.isHourAlarm=Application.cache.getBool(HourAlarmTag)??true;
+    Application.myClock!.canQuarterAlarm=Application.cache.getBool(QuarterAlarmTag)??true;
+    Application.myClock!.canHalfAlarm=Application.cache.getBool(HalfAlarmTag)??true;
+    Application.myClock!.canHourAlarm=Application.cache.getBool(HourAlarmTag)??true;
   }
 
   @override
@@ -337,7 +334,7 @@ class ClockComponentState extends State<ClockComponent>
   void dispose() {
     // AutoOrientation.fullAutoMode();
     Wakelock.disable();
-    myClock.dispose();
+    Application.myClock!.dispose();
     super.dispose();
   }
 
@@ -376,13 +373,13 @@ class ClockComponentState extends State<ClockComponent>
           showSettingCompoment(context);
           break;
         case ClockEventType.sleepScheduleChange:
-          myClock.noWakeLockSchedule = t.value;
+          Application.myClock!.noWakeLockSchedule = t.value;
           break;
         case ClockEventType.slientScheduleChange:
-          myClock.noSoundSchedule = t.value;
+          Application.myClock!.noSoundSchedule = t.value;
           break;
         case ClockEventType.slientChange:
-          myClock.setSlient = t.value;
+          Application.myClock!.setSlient = t.value;
           break;
         case ClockEventType.exit:
         default:
