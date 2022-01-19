@@ -1,12 +1,12 @@
 
 ///App版本
-final String AppVersion = "2.0.0";
+final String AppVersion = "2.1.0";
 ///AppId
 final String AppId = "com.sword.justclock";
 
 ///报时音效生效时段
 final int alarmBegin=7;
-final int alarmEnd=23;
+final int alarmEnd=22;
 
 ///息屏休眠时段
 final int hiberBegin=8;

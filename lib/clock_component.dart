@@ -24,8 +24,8 @@ class ClockComponentState extends State<ClockComponent>
     with WidgetsBindingObserver {
   final Logger logger = log.newInstanse(logTag: "JustClock");
   bool forceInit = false;
-  
-  late Widget clockWidget;
+
+  Widget? clockWidget;
   bool needFresh = true;
   late Cron cron;
   late DigitalClockConfig clockConfig;
@@ -77,6 +77,32 @@ class ClockComponentState extends State<ClockComponent>
       style: ActionStyle.icon.index,
       rect: Rect.fromCenter(center: Offset(86, -36), width: 14, height: 12),
       imgs: [Icons.settings.codePoint.toString()],
+    ),
+    slientItem: ItemConfig(
+      style: ActionStyle.icon.index,
+      rect: Rect.fromCenter(center: Offset(86, 0), width: 14, height: 12),
+      imgs: [
+        Icons.notifications_off.codePoint.toString(),
+        Icons.notifications.codePoint.toString()
+      ],
+    ),
+    countDownItem: ItemConfig(
+      style: ActionStyle.icon.index,
+      rect: Rect.fromCenter(center: Offset(86, 20), width: 14, height: 12),
+      imgs: [
+        Icons.restore.codePoint.toString(),
+        Icons.timer.codePoint.toString()
+      ],
+    ),
+    cdMinuteItem: ItemConfig(
+      style: TimeStyle.number.index,
+      textStyle: TextStyle(fontSize: 48, color: Colours.antiqueWhite),
+      rect: Rect.fromCenter(center: Offset(-40, 0), width: 64, height: 56),
+    ),
+    cdSecondItem: ItemConfig(
+      style: TimeStyle.number.index,
+      textStyle: TextStyle(fontSize: 48, color: Colours.antiqueWhite),
+      rect: Rect.fromCenter(center: Offset(40, 0), width: 64, height: 56),
     ),
     exitItem: ItemConfig(
       style: ActionStyle.empty.index,
@@ -132,6 +158,32 @@ class ClockComponentState extends State<ClockComponent>
       style: H12Style.pic.index,
       rect: Rect.fromCenter(center: Offset(238, 100), width: 45, height: 50),
     ),
+    slientItem: ItemConfig(
+      style: ActionStyle.icon.index,
+      rect: Rect.fromCenter(center: Offset(238, -10), width: 32, height: 32),
+      imgs: [
+        Icons.notifications_off.codePoint.toString(),
+        Icons.notifications.codePoint.toString()
+      ],
+    ),
+    countDownItem: ItemConfig(
+      style: ActionStyle.icon.index,
+      rect: Rect.fromCenter(center: Offset(238, 40), width: 32, height: 32),
+      imgs: [
+        Icons.restore.codePoint.toString(),
+        Icons.timer.codePoint.toString()
+      ],
+    ),
+    cdMinuteItem: ItemConfig(
+        style: TimeStyle.flip.index,
+        rect: Rect.fromCenter(center: Offset(-146, 9), width: 222, height: 239),
+        imgPrename: "d",
+        imgExtname: ".png"),
+    cdSecondItem: ItemConfig(
+        style: TimeStyle.flip.index,
+        rect: Rect.fromCenter(center: Offset(93, 9), width: 222, height: 239),
+        imgPrename: "d",
+        imgExtname: ".png"),
   );
 
   DigitalClockConfig flipClock3 = DigitalClockConfig(
@@ -181,43 +233,33 @@ class ClockComponentState extends State<ClockComponent>
         Icons.notifications.codePoint.toString()
       ],
     ),
+    countDownItem: ItemConfig(
+      style: ActionStyle.icon.index,
+      rect: Rect.fromCenter(center: Offset(260, 100), width: 32, height: 32),
+      imgs: [
+        Icons.restore.codePoint.toString(),
+        Icons.timer.codePoint.toString()
+      ],
+    ),
+    cdMinuteItem: ItemConfig(
+        style: TimeStyle.flip.index,
+        rect: Rect.fromCenter(center: Offset(-119, 1), width: 222, height: 239),
+        imgPrename: "d",
+        imgExtname: ".png"),
+    cdSecondItem: ItemConfig(
+        style: TimeStyle.flip.index,
+        rect: Rect.fromCenter(center: Offset(119, 1), width: 222, height: 239),
+        imgPrename: "d",
+        imgExtname: ".png"),
   );
+
 
   @override
   void initState() {
     WidgetsBinding.instance?.addObserver(this); //添加观察者
-    // vibrate.init();
-    //
-    // sound.init();
-
-    // AutoOrientation.landscapeAutoMode();
-
     checkUpgrade();
     reloadConfig();
-    // clockConfig=textClock;
-    // clockConfig=flipClock2;
-    // clockConfig.skinBasePath =
-    // "${Application.appRootPath}/skins/${flipClock2.skinBasePath}/";
 
-    // largePrint(textClock);
-    // largePrint(flipClock);
-    // largePrint(flipClock3);
-
-    // Schedule keepWakeup = Schedule.parse("* * $hiberBegin-$hiberEnd * * 1-5");
-    // if (keepWakeup.match(DateTime.now())) {
-    //   // print("Time match,set wakelock to enable");
-    //   Wakelock.enable();
-    // }
-
-    // cron = Cron();
-    // cron.schedule(Schedule.parse("0 0 $hiberBegin * * 1-5"), Wakelock.disable);
-    // cron.schedule(Schedule.parse("0 0 $hiberEnd * * 1-5"), Wakelock.enable);
-    // cron.schedule(
-    //     Schedule(
-    //       minutes: [0, 15, 30, 45],
-    //       // weekdays: [1, 2, 3, 4, 5],
-    //     ),
-    //     clockAlert);
     Application.myClock = AlarmClock(
         newSchedule: Schedule(
           minutes: [0, 15, 30, 45],
@@ -231,20 +273,26 @@ class ClockComponentState extends State<ClockComponent>
         sleepDisableAction: () =>
             logger.fine("sleepDisableAction() run ${Wakelock.enable()}"));
 
-    Application.myClock!.addSpecialSchedule(
-        Schedule(hours: "2-5"), "已经 {} 了，熬夜看书不是个好习惯，赶紧睡吧");
-    Application.myClock!.addSpecialSchedule(
-        Schedule(hours: [23, 0, 1]), "夜猫子，不要看太晚了，已经 {} 了");
-    Application.myClock!.addSpecialSchedule(Schedule(hours: "6-8"), "早起读书精神爽，现在是 {} 了");
-    Application.myClock!.addSpecialSchedule(Schedule(hours: 9), "抓紧时间上班吧，已经 {} 了");
+    Application.myClock!
+        .addSpecialSchedule(Schedule(hours: "2-5"), "已经 {} 了，熬夜看书不是个好习惯，赶紧睡吧");
+    Application.myClock!
+        .addSpecialSchedule(Schedule(hours: [23, 0, 1]), "夜猫子，不要看太晚了，已经 {} 了");
+    Application.myClock!
+        .addSpecialSchedule(Schedule(hours: "6-8"), "早起读书精神爽，现在是 {} 了");
+    Application.myClock!
+        .addSpecialSchedule(Schedule(hours: 9), "抓紧时间上班吧，已经 {} 了");
     Application.myClock!.addSpecialSchedule(
         Schedule(hours: [10, 11, 14, 15, 16, 17]), "上班摸鱼可不是好习惯，现在是 {}");
-    Application.myClock!.addSpecialSchedule(Schedule(hours: 12), "现在是 {}，赶紧吃饭去吧");
-    Application.myClock!.addSpecialSchedule(Schedule(hours: 13), "现在是 {}，午休时间哦，眯一会儿吧");
-    Application.myClock!.addSpecialSchedule(Schedule(hours: 18), "现在是 {}，总算下班了");
-    Application.myClock!.addSpecialSchedule(Schedule(hours: "19-22"), "只要不加班，快活到天亮，现在是 {}");
-    Application.myClock!.addSpecialSchedule(
-        Schedule(days: 15, months: 4), "今天是闹钟模块诞生的日子，值得纪念");
+    Application.myClock!
+        .addSpecialSchedule(Schedule(hours: 12), "现在是 {}，赶紧吃饭去吧");
+    Application.myClock!
+        .addSpecialSchedule(Schedule(hours: 13), "现在是 {}，午休时间哦，眯一会儿吧");
+    Application.myClock!
+        .addSpecialSchedule(Schedule(hours: 18), "现在是 {}，总算下班了");
+    Application.myClock!
+        .addSpecialSchedule(Schedule(hours: "19-22"), "只要不加班，快活到天亮，现在是 {}");
+    Application.myClock!
+        .addSpecialSchedule(Schedule(days: 15, months: 4), "今天是闹钟模块诞生的日子，值得纪念");
     Application.myClock!.addSpecialSchedule(
         Schedule(days: 27, months: 4), "今天是闹钟模块开发者的生日，快祝他生日快乐吧！");
     Application.myClock!.addSpecialSchedule(
@@ -257,10 +305,19 @@ class ClockComponentState extends State<ClockComponent>
     getAlarmCache();
   }
 
-  void getAlarmCache(){
-    Application.myClock!.canQuarterAlarm=Application.cache.getBool(QuarterAlarmTag)??true;
-    Application.myClock!.canHalfAlarm=Application.cache.getBool(HalfAlarmTag)??true;
-    Application.myClock!.canHourAlarm=Application.cache.getBool(HourAlarmTag)??true;
+  void getAlarmCache() {
+    Application.myClock!.canQuarterAlarm =
+        Application.cache.getBool(QuarterAlarmTag) ?? true;
+    Application.myClock!.canHalfAlarm =
+        Application.cache.getBool(HalfAlarmTag) ?? true;
+    Application.myClock!.canHourAlarm =
+        Application.cache.getBool(HourAlarmTag) ?? true;
+    Application.myClock!.enableVibrate =
+        Application.cache.getBool(EnableVibrateTag) ?? true;
+    Application.myClock!.enableFlashLamp =
+        Application.cache.getBool(EnableFlashTag) ?? true;
+    Application.myClock!.enableAlarmSound =
+        Application.cache.getBool(EnableSoundTag) ?? true;
   }
 
   @override
@@ -284,7 +341,7 @@ class ClockComponentState extends State<ClockComponent>
           Setting.isForceUpdate &&
           Platform.isAndroid) {
         // showToast(LocaleKeys.launch_forceUpgradeAlert.tr(),showInSec: 15);
-        showToast(Setting.androidUpdateLog??"优化用户体验", showInSec: 15);
+        showToast(Setting.androidUpdateLog ?? "优化用户体验", showInSec: 15);
         // String? apkFile = await saveUrlFile(Setting.androidAppUrl!);
         Vibrate.littleShake();
         // if(apkFile!=null)
@@ -293,7 +350,7 @@ class ClockComponentState extends State<ClockComponent>
         // }else{
         //   showToast("更新文件下载错误，请稍后再试！");
         // }
-        await upgradeApk(Setting.androidAppUrl!,fileName: "app.apk");
+        await upgradeApk(Setting.androidAppUrl!, fileName: "app.apk");
       }
     });
   }
@@ -308,9 +365,11 @@ class ClockComponentState extends State<ClockComponent>
             "${Application.appRootPath}/skins/${Application.defaultSkin}/config.json");
 
         if (clockConfigFile.existsSync()) {
-          clockConfig = DigitalClockConfig.fromFile(clockConfigFile)??textClock;
+          clockConfig =
+              DigitalClockConfig.fromFile(clockConfigFile) ?? textClock;
 
-          // clockConfig=DigitalClockConfig.fromJson(flipClock.toString());
+          /// 测试皮肤拦截处
+          clockConfig=DigitalClockConfig.fromJson(flipClock2.toString())!;
 
           clockConfig.skinBasePath =
               "${Application.appRootPath}/skins/${Application.defaultSkin}/";
@@ -381,6 +440,13 @@ class ClockComponentState extends State<ClockComponent>
         case ClockEventType.slientChange:
           Application.myClock!.setSlient = t.value;
           break;
+        case ClockEventType.countDownStart:
+          Duration d = t.value;
+          showToast("倒计时模式开始 ${d.inMinutes}分钟");
+          break;
+        case ClockEventType.countDownStop:
+          showToast("倒计时模式结束");
+          break;
         case ClockEventType.exit:
         default:
           break;
@@ -421,11 +487,12 @@ class ClockComponentState extends State<ClockComponent>
     // if (screenSize.height > screenSize.width) {
     //   screenSize = Size(screenSize.height, screenSize.width);
     // }
-    logger.fine("Screen ${screenSize.toString()}");
-    clockWidget = newDigitalClock(needFresh);
-    if (needFresh) {
+    // logger.fine("Screen ${screenSize.toString()}");
+    if(clockWidget==null || needFresh) {
+      clockWidget = newDigitalClock(needFresh);
       needFresh = false;
     }
+
     return Scaffold(
       body: Container(
         height: screenSize.height,

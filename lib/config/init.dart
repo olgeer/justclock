@@ -20,7 +20,6 @@ Future preProcess() async {
   // print(Setting.toJson());
 
   Application.defaultSkin=Application.cache.getString(DefaultSkin);
-
 }
 
 
