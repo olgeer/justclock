@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 2.1.0
+version: 2.1.1
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -33,13 +33,20 @@ dependencies:
   flutter_archive: ^4.0.1
 #  install_apk_plugin: ^1.0.1
   r_upgrade: ^0.3.5
-  console: ^4.1.0
+#  console: ^4.1.0
   time_range_picker: ^2.0.1
+#  wakelock: ^0.6.1
+#  flutter_easyloading: ^3.0.3
   digital_clock:
 #    git:
 #      url: git://github.com/olgeer/digital_clock.git
 #      ref: main
     path: ../digital_clock
+#  base_utility:
+#    git:
+#      url: https://github.com/olgeer/base_utility.git
+#      ref: master
+#    path: ../base_utility
 #  hash:
 #    git:
 #      url: git://github.com/olgeer/hash.git

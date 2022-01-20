@@ -5,6 +5,11 @@ www/
 web/
 keystore/
 .SynologyWorkingDirectory/
+*.zip
+*.cmd
+*.txt
+*.lock
+Icon
 
 # Miscellaneous
 *.class

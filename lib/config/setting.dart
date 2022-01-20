@@ -1,6 +1,5 @@
 import 'dart:convert';
-import 'package:justclock/pkg/logger.dart';
-import 'package:justclock/widget/Toast.dart';
+import 'package:base_utility/base_utility.dart';
 import 'package:justclock/config/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:justclock/config/application.dart';

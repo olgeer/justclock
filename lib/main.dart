@@ -1,5 +1,4 @@
 library justclock;
-// import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:justclock/clock_component.dart';
 import 'package:justclock/config/init.dart';
@@ -9,29 +8,6 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await preProcess();
   runApp(MyApp());
-      // EasyLocalization(
-      // child: MyApp(),
-      // supportedLocales: [Locale('zh', 'CH'), Locale('en', 'US')],
-      // path: 'translations',
-      // fallbackLocale: Locale('en', 'US'),
-      // // fallbackLocale: Locale('zh', 'CH'),
-      // // startLocale: Locale('zh', 'CH'), //set chinese is default
-      // // saveLocale: false,
-      // // useOnlyLangCode: true,
-      // // preloaderColor: Colors.black,
-      // // preloaderWidget: CustomPreloaderWidget(),
-      //
-      // // optional assetLoader default used is RootBundleAssetLoader which uses flutter's assetloader
-      // // install easy_localization_loader for enable custom loaders
-      // // assetLoader: RootBundleAssetLoader()
-      // // assetLoader: HttpAssetLoader()
-      // // assetLoader: FileAssetLoader()
-      // // assetLoader: JsonAssetLoader()
-      // // assetLoader: YamlAssetLoader() //multiple files
-      // // assetLoader: YamlSingleAssetLoader() //single file
-      // // assetLoader: XmlAssetLoader() //multiple files
-      // // assetLoader: XmlSingleAssetLoader() //single file
-      // assetLoader: CodegenLoader()));
 }
 
 class MyApp extends StatelessWidget {

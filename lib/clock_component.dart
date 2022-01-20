@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:base_utility/base_utility.dart';
 import 'package:digital_clock/digital_clock.dart';
 import 'package:auto_orientation/auto_orientation.dart';
 import 'package:colours/colours.dart';
@@ -8,11 +9,9 @@ import 'package:justclock/config/application.dart';
 import 'package:justclock/config/constants.dart';
 import 'package:justclock/config/setting.dart';
 import 'package:justclock/pkg/utils.dart';
-import 'package:justclock/widget/Toast.dart';
 import 'package:justclock/widget/clockSetting.dart';
 import 'package:flutter/material.dart';
 import 'package:wakelock/wakelock.dart';
-import 'package:justclock/pkg/logger.dart' as log;
 import 'package:logging/logging.dart';
 
 class ClockComponent extends StatefulWidget {
@@ -22,7 +21,7 @@ class ClockComponent extends StatefulWidget {
 
 class ClockComponentState extends State<ClockComponent>
     with WidgetsBindingObserver {
-  final Logger logger = log.newInstanse(logTag: "JustClock");
+  final Logger logger = Logger("JustClock");
   bool forceInit = false;
 
   Widget? clockWidget;
@@ -369,10 +368,11 @@ class ClockComponentState extends State<ClockComponent>
               DigitalClockConfig.fromFile(clockConfigFile) ?? textClock;
 
           /// 测试皮肤拦截处
-          clockConfig=DigitalClockConfig.fromJson(flipClock2.toString())!;
+          // clockConfig=DigitalClockConfig.fromJson(flipClock2.toString())!;
 
           clockConfig.skinBasePath =
               "${Application.appRootPath}/skins/${Application.defaultSkin}/";
+          print(clockConfig.skinBasePath);
         } else
           clockConfig = textClock;
       } catch (e) {
@@ -442,10 +442,14 @@ class ClockComponentState extends State<ClockComponent>
           break;
         case ClockEventType.countDownStart:
           Duration d = t.value;
-          showToast("倒计时模式开始 ${d.inMinutes}分钟");
+          Application.myClock!.enableVibrate?Vibrate.littleShake():DNT();
+
+          showToast("倒计时 ${d.inMinutes}分钟 开始");
           break;
         case ClockEventType.countDownStop:
-          showToast("倒计时模式结束");
+          bool isCancel = t.value;
+          isCancel==true?DNT():Application.myClock?.callAlarm();
+          showToast("倒计时结束");
           break;
         case ClockEventType.exit:
         default:

@@ -8,14 +8,14 @@ import 'package:flutter/cupertino.dart';
 // import 'package:hash/hash.dart' as hash;
 import 'package:http/http.dart';
 // import 'package:install_apk_plugin/install_apk_plugin.dart';
-import 'package:justclock/pkg/logger.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:r_upgrade/r_upgrade.dart';
+import 'package:base_utility/base_utility.dart';
 
-typedef voidProc = void Function();
-typedef eventCall = void Function(dynamic value);
-typedef contextProc = void Function(BuildContext context);
+// typedef voidProc = void Function();
+// typedef eventCall = void Function(dynamic value);
+// typedef contextProc = void Function(BuildContext context);
 
 String genKey({int lenght = 24}) {
   const randomChars = [

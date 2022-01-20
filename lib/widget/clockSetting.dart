@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:base_utility/base_utility.dart';
 import 'package:cron/cron.dart';
 import 'package:digital_clock/digital_clock.dart';
 import 'package:flutter/material.dart';
@@ -11,12 +12,9 @@ import 'package:justclock/config/constants.dart';
 import 'package:justclock/config/setting.dart';
 import 'package:justclock/pkg/utils.dart';
 import 'package:justclock/widget/SmartFolder.dart';
-import 'package:justclock/widget/Toast.dart';
 import 'package:justclock/widget/imageCardList.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:time_range_picker/time_range_picker.dart';
-import 'package:vibration/vibration.dart';
-import 'package:justclock/pkg/logger.dart' as log;
 import 'package:logging/logging.dart';
 
 class SettingComponent extends StatefulWidget {
@@ -25,7 +23,7 @@ class SettingComponent extends StatefulWidget {
 }
 
 class SettingComponentState extends State<SettingComponent> {
-  final Logger logger = log.newInstanse(logTag: "SettingComponent");
+  final Logger logger = Logger("SettingComponent");
   var skinList;
   Map<String, String>? skinMap;
   late String skinPkgUrl;
@@ -219,7 +217,7 @@ class SettingComponentState extends State<SettingComponent> {
 
     if(Setting.androidAppUrl!=null){
       showToast("正在升级应用，请稍候。。。");
-      Vibration.vibrate();
+      Vibrate.mediumVibrate();
       // String? apkFile = await saveUrlFile(Setting.androidAppUrl!);
       // if(apkFile!=null) {
       //   await installApk(apkFile, AppId);

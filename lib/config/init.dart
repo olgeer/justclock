@@ -6,7 +6,7 @@ import 'package:justclock/config/constants.dart';
 import 'package:justclock/config/setting.dart';
 import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:justclock/pkg/logger.dart';
+import 'package:base_utility/base_utility.dart';
 
 //App启动前预处理
 Future preProcess() async {
