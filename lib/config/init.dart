@@ -1,10 +1,7 @@
-
-
 import 'package:justclock/pkg/utils.dart';
 import 'package:justclock/config/application.dart';
 import 'package:justclock/config/constants.dart';
 import 'package:justclock/config/setting.dart';
-import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:base_utility/base_utility.dart';
 

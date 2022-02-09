@@ -3,19 +3,11 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:math';
 import 'package:basic_utils/basic_utils.dart';
-import 'package:auto_orientation/auto_orientation.dart';
-import 'package:flutter/cupertino.dart';
-// import 'package:hash/hash.dart' as hash;
-import 'package:http/http.dart';
-// import 'package:install_apk_plugin/install_apk_plugin.dart';
+import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:r_upgrade/r_upgrade.dart';
 import 'package:base_utility/base_utility.dart';
-
-// typedef voidProc = void Function();
-// typedef eventCall = void Function(dynamic value);
-// typedef contextProc = void Function(BuildContext context);
 
 String genKey({int lenght = 24}) {
   const randomChars = [
@@ -272,12 +264,12 @@ void setRotateMode({bool canRotate = true}) {
   // Logger().debug("NovelReader", "canRotate:$canRotate");
 }
 
-Future<Response?> getUrlFile(String url,
+Future<http.Response?> getUrlFile(String url,
     {int retry = 3,
     int seconds = 3,
     eventCall? onSuccess,
     eventCall? onError}) async {
-  Response? tmp;
+  http.Response? tmp;
 
   do {
     try {
@@ -312,7 +304,7 @@ Future<String?> saveUrlFile(String url,
     int seconds = 3,
     eventCall? onSuccess,
     eventCall? onError}) async {
-  Response? tmpResp = await getUrlFile(url, retry: retry, seconds: seconds);
+  http.Response? tmpResp = await getUrlFile(url, retry: retry, seconds: seconds);
   largePrint(tmpResp?.headers);
   // if(tmpResp!=null && tmpResp.headers['Content-Length']!=null && int.parse(tmpResp.headers['Content-Length'])>0) {
   if ((tmpResp?.bodyBytes.length??0) > 0) {
