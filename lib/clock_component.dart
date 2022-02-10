@@ -1,9 +1,7 @@
 import 'dart:io';
 import 'package:base_utility/base_utility.dart';
 import 'package:digital_clock/digital_clock.dart';
-import 'package:auto_orientation/auto_orientation.dart';
 import 'package:colours/colours.dart';
-import 'package:cron/cron.dart';
 import 'package:flutter/services.dart';
 import 'package:justclock/config/application.dart';
 import 'package:justclock/config/constants.dart';
@@ -12,7 +10,6 @@ import 'package:justclock/pkg/utils.dart';
 import 'package:justclock/widget/clockSetting.dart';
 import 'package:flutter/material.dart';
 import 'package:wakelock/wakelock.dart';
-import 'package:logging/logging.dart';
 
 class ClockComponent extends StatefulWidget {
   @override
