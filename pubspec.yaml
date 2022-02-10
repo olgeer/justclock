@@ -38,10 +38,10 @@ dependencies:
 #  wakelock: ^0.6.1
 #  flutter_easyloading: ^3.0.3
   digital_clock:
-#    git:
-#      url: git://github.com/olgeer/digital_clock.git
-#      ref: main
-    path: ../digital_clock
+    git:
+      url: git://github.com/olgeer/digital_clock.git
+      ref: main
+#    path: ../digital_clock
 #  base_utility:
 #    git:
 #      url: https://github.com/olgeer/base_utility.git

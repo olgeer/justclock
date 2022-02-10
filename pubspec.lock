@@ -18,9 +18,11 @@ packages:
   base_utility:
     dependency: transitive
     description:
-      path: "../base_utility"
-      relative: true
-    source: path
+      path: "."
+      ref: master
+      resolved-ref: "2f60f5dee3584336d3865ce4ef086994622eba55"
+      url: "https://github.com/olgeer/base_utility.git"
+    source: git
     version: "1.0.0"
   basic_utils:
     dependency: "direct main"
@@ -102,10 +104,12 @@ packages:
   digital_clock:
     dependency: "direct main"
     description:
-      path: "../digital_clock"
-      relative: true
-    source: path
-    version: "2.1.1"
+      path: "."
+      ref: main
+      resolved-ref: "4d7b09c7278cedf41058b82b27b6587154efbfc2"
+      url: "git://github.com/olgeer/digital_clock.git"
+    source: git
+    version: "2.1.2"
   fake_async:
     dependency: transitive
     description:
