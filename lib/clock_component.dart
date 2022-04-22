@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:justclock/config/application.dart';
 import 'package:justclock/config/constants.dart';
 import 'package:justclock/config/setting.dart';
-import 'package:justclock/pkg/utils.dart';
 import 'package:justclock/widget/clockSetting.dart';
 import 'package:flutter/material.dart';
 import 'package:wakelock/wakelock.dart';
@@ -382,7 +381,7 @@ class ClockComponentState extends State<ClockComponent>
       forceInit = false;
     }
     logger.fine("finally use ${clockConfig.skinName} config.");
-    largePrint(clockConfig.toString());
+    largeLog(clockConfig.toString());
     needFresh = true;
   }
 
@@ -449,6 +448,8 @@ class ClockComponentState extends State<ClockComponent>
           showToast("倒计时结束");
           break;
         case ClockEventType.exit:
+          // defaultExitAction(context);
+          // break;
         default:
           break;
       }

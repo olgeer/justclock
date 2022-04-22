@@ -9,7 +9,6 @@ import 'package:flutter_archive/flutter_archive.dart';
 import 'package:justclock/config/application.dart';
 import 'package:justclock/config/constants.dart';
 import 'package:justclock/config/setting.dart';
-import 'package:justclock/pkg/utils.dart';
 import 'package:justclock/widget/SmartFolder.dart';
 import 'package:justclock/widget/imageCardList.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
@@ -45,7 +44,7 @@ class SettingComponentState extends State<SettingComponent> {
   void loadSkinList() async {
     String skinJson = utf8.decode((await getUrlFile(
       "${Setting.apiDomain}www/skinlist.json",
-    ))?.bodyBytes??[]);
+    ))?.data.toList()??[]);
     // showToast(skinJson);
 
     skinList = json.decode(skinJson);
@@ -74,7 +73,7 @@ class SettingComponentState extends State<SettingComponent> {
             forceUpdate) {
           skinPkgUrl = "${Setting.apiDomain}skins/${m["file"]}";
           String? skinFile = await saveUrlFile(
-              "${Setting.apiDomain}skins/${m["file"]}",
+              "${Setting.apiDomain}skins/${m["file"]}",savePath:Application.appRootPath
               saveFileWithoutExt: "$skinDir$skinName");
 
           if(skinFile!=null) {
