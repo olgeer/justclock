@@ -1,0 +1,12 @@
+{
+"configVersion":"{androidVersion}",
+"configDomain":"http://olgeer.3322.org:14080/justclock",
+"apiDomain":"http://olgeer.3322.org:14080/justclock",
+"androidVersion":"{androidVersion}",
+"androidUpdateLog":"全新版本升级",
+"iosVersion":"1.1",
+"androidAppUrl":"http://olgeer.3322.org:14080/justclock/android/justclock_{androidVersion}.apk",
+"iosUploadLog":"暂无",
+"iosAppUrl":null,
+"isForceUpdate":true
+}

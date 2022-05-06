@@ -251,6 +251,7 @@ class ClockComponentState extends State<ClockComponent>
 
   @override
   void initState() {
+    super.initState();
     WidgetsBinding.instance?.addObserver(this); //添加观察者
     checkUpgrade();
     reloadConfig();
@@ -336,7 +337,7 @@ class ClockComponentState extends State<ClockComponent>
           Setting.isForceUpdate &&
           Platform.isAndroid) {
         // showToast(LocaleKeys.launch_forceUpgradeAlert.tr(),showInSec: 15);
-        showToast(Setting.androidUpdateLog ?? "优化用户体验", showInSec: 15);
+        showToast(Setting.androidUpdateLog, showInSec: 15);
         // String? apkFile = await saveUrlFile(Setting.androidAppUrl!);
         Vibrate.littleShake();
         // if(apkFile!=null)

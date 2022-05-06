@@ -43,7 +43,7 @@ class SettingComponentState extends State<SettingComponent> {
 
   void loadSkinList() async {
     String skinJson = utf8.decode((await getUrlFile(
-      "${Setting.apiDomain}www/skinlist.json",
+      "${Setting.apiDomain}/www/skinlist.json",
     ))?.data.toList()??[]);
     // showToast(skinJson);
 
@@ -52,7 +52,7 @@ class SettingComponentState extends State<SettingComponent> {
       skinMap = Map<String, String>();
       for (var m in skinList["skin"]) {
         skinMap!.putIfAbsent(
-            m["title"], () => "${Setting.apiDomain}skins/${m["sample"]}");
+            m["title"], () => "${Setting.apiDomain}/skins/${m["sample"]}");
       }
     }
     setState(() {});
@@ -71,9 +71,9 @@ class SettingComponentState extends State<SettingComponent> {
 
         if (!File("$skinDir$skinName/config.json").existsSync() ||
             forceUpdate) {
-          skinPkgUrl = "${Setting.apiDomain}skins/${m["file"]}";
+          skinPkgUrl = "${Setting.apiDomain}/skins/${m["file"]}";
           String? skinFile = await saveUrlFile(
-              "${Setting.apiDomain}skins/${m["file"]}",savePath:Application.appRootPath
+              "${Setting.apiDomain}/skins/${m["file"]}",savePath:Application.appRootPath
               saveFileWithoutExt: "$skinDir$skinName");
 
           if(skinFile!=null) {
@@ -221,7 +221,7 @@ class SettingComponentState extends State<SettingComponent> {
       // }else{
       //   showToast("升级文件下载错误，请稍后再试！");
       // }
-      await upgradeApk(Setting.androidAppUrl!,fileName: "app.apk");
+      await upgradeApk(Setting.androidAppUrl!,fileName: getFullFileName(Setting.androidAppUrl!));
     }else{
       showToast("未找到应用升级路径，请稍后再试！");
     }
@@ -428,7 +428,7 @@ class SettingComponentState extends State<SettingComponent> {
                 ),
                 ListTile(
                   title: Text("纯粹时钟"),
-                  subtitle: Text("版本：$AppVersion      开发者： olgeer@163.com"),
+                  subtitle: Text("版本：${Application.appVersion}      开发者： olgeer@163.com"),
                   trailing: Icon(
                     LineAwesomeIcons.helicopter,
                     size: 32,

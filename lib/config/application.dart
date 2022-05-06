@@ -4,6 +4,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 //全局变量
 class Application {
+  static String appVersion="未知";
+  static String packageName="justclock";
+
+  static final bool fouceInit = true;
+
   static late SharedPreferences cache;
   static String? defaultSkin;
   static late String appRootPath;

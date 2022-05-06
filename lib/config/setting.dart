@@ -1,54 +1,64 @@
 import 'dart:convert';
-import 'package:base_utility/base_utility.dart';
-import 'package:justclock/config/constants.dart';
-import 'package:http/http.dart' as http;
+import 'dart:io';
+// import 'package:http/http.dart' as http;
 import 'package:justclock/config/application.dart';
-import 'package:justclock/pkg/utils.dart' as f;
+import 'package:base_utility/toast.dart';
+import 'package:base_utility/logger.dart';
+import 'package:base_utility/utils.dart';
+import 'package:dio/dio.dart';
 
 class Setting {
   static String configVersion = "1.0";
-  static String configDomain = "http://olgeer.3322.org:8888/justclock/setting.json";
-  static String apiDomain="http://olgeer.3322.org:8888/justclock/";
+  static String configDomain = "http://olgeer.3322.org:14080/justclock";
+  static String? apiLoginDomain, apiUploadDomain;
+  static String? apiDomain = "http://olgeer.3322.org:14080/justclock/";
   static String androidVersion = "1.0";
-  static String? androidUpdateLog;
+  static String androidUpdateLog="";
   static String iosVersion = "1.0";
-  static String? iosUpdateLog;
+  static String iosUpdateLog="";
   static bool isForceUpdate = false;
   static String? androidAppUrl;
   static String? iosAppUrl;
+  static late String nsconfigUrl;
+  static bool configModify = false;
 
   static Future loadSetting() async {
-    var settingStr =
-        f.readFileString("${Application.appRootPath}/setting.json");
+    String logId=genKey(lenght: 8);
+    // var setting_str = await rootBundle.loadString('assets/setting/setting.json');
+    logger.info("loading ${Application.appRootPath}/setting.json");
+    var settingStr;
+    if(!Application.fouceInit)settingStr=read4File("${Application.appRootPath}/setting.json");
     try {
       if (settingStr != null) {
         Map<String, dynamic> setting = json.decode(settingStr);
+        // setting['apiDomain']="http://olgeer.3322.org:8088/api";
 
         fromJson(setting);
-        logger.fine("load setting.json success !");
+        print("Setting-$logId load setting.temple success !");
       }
+
     } catch (e) {
-      logger.warning("Setting file is invaild ! [$settingStr]");
-      logger.warning(e);
+      print("Setting-$logId Setting file is invaild ! [$settingStr]");
+      print("Setting-$logId ${e.toString()}");
     }finally{
-      await loadSettingFromUrl(configDomain);
+      await loadSettingFromUrl("$configDomain/setting.json");
     }
   }
 
   static Future loadSettingFromUrl(String url) async {
-    bool configModify = false;
+    String logId=genKey(lenght: 8);
     try {
-      logger.fine( url);
-      logger.fine(url);
-      final response = await http.get(Uri.parse(url));
+      print("Setting-$logId $url");
+      // var response = await http.get(Uri.parse(url));
+      Response? response = await getUrlFile(url);
 
-      if (response.statusCode == 200) {
-        Map<String, dynamic> configJson = json.decode(utf8.decode(response.bodyBytes));
+      if (response?.statusCode == 200) {
+        Map<String, dynamic> configJson = json.decode(utf8.decode(response!.data.toList()));
         // print(configJson['androidUpdateLog']);
 
         //config version is change，record at location file
         if (configVersion
-                .compareTo(configJson['configVersion'] ?? configVersion) <
+            .compareTo(configJson['configVersion'] ?? configVersion) <
             0) {
           configVersion = configJson['configVersion'];
           configModify = true;
@@ -57,16 +67,15 @@ class Setting {
 
           saveSetting();
         }
-        if (AppVersion.compareTo(androidVersion) < 0) {
+        if (Application.appVersion.compareTo(androidVersion) < 0) {
           Application.appCanUpgrade = true;
-          Application.cache.remove(DefaultSkin);
         }
       } else {
-        logger.fine( "Domain response error[${response.statusCode}]");
+        print("Setting-$logId Domain response error[${response?.statusCode}]");
       }
       //print("Setting is ${Setting()}");
     } catch (e) {
-      logger.warning(e);
+      print("Setting-$logId ${e.toString()}");
     }
   }
 
@@ -76,22 +85,23 @@ class Setting {
   }
 
   static saveSetting() {
-    f.save2File("${Application.appRootPath}/setting.json", Setting.toJson());
+    save2File("${Application.appRootPath}/setting.json", Setting.toJson(),fileMode: FileMode.write);
     showToast("配置保存成功");
   }
 
   static String toJson() => jsonEncode({
-        "configVersion": configVersion,
-        "configDomain": configDomain,
-        "apiDomain": apiDomain,
-        "androidVersion": androidVersion,
-        "androidUpdateLog": androidUpdateLog,
-        "androidAppUrl": androidAppUrl,
-        "iosVersion": iosVersion,
-        "iosUpdateLog": iosUpdateLog,
-        "iosAppUrl": iosAppUrl,
-        "isForceUpdate": isForceUpdate,
-      });
+    "configVersion": configVersion,
+    "configDomain": configDomain,
+    "apiDomain": apiDomain,
+    "androidVersion": androidVersion,
+    "androidUpdateLog": androidUpdateLog,
+    "androidAppUrl": androidAppUrl,
+    "iosVersion": iosVersion,
+    "iosUpdateLog": iosUpdateLog,
+    "iosAppUrl": iosAppUrl,
+    "isForceUpdate": isForceUpdate,
+    "nsconfigUrl": nsconfigUrl,
+  });
 
   static fromJson(Map<String, dynamic> jmap) {
     configVersion = jmap["configVersion"] ?? configVersion;
@@ -104,5 +114,6 @@ class Setting {
     iosUpdateLog = jmap['iosUpdateLog'] ?? iosUpdateLog;
     iosAppUrl = jmap['iosAppUrl'] ?? iosAppUrl;
     isForceUpdate = jmap['isForceUpdate'] ?? false;
+    nsconfigUrl = jmap['nsconfigUrl'] ?? nsconfigUrl;
   }
 }
