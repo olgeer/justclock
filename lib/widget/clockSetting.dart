@@ -93,7 +93,7 @@ class SettingComponentState extends State<SettingComponent> {
 
         if(File("$skinDir$skinName/config.json").existsSync()){
           Application.defaultSkin = skinName;
-          Application.cache.setString(DefaultSkin, skinName);
+          Application.cache.write(DefaultSkin, skinName);
 
           showToast("皮肤已更换为$skinTitle");
           Navigator.pop(
@@ -242,27 +242,27 @@ class SettingComponentState extends State<SettingComponent> {
   void setAlarmCache({bool? isQuarterAlarm,bool? isHalfAlarm,bool? isHourAlarm,bool? enableVibrate,bool? enableFlash,bool? enableSound}){
     if(isQuarterAlarm!=null){
       Application.myClock!.canQuarterAlarm=isQuarterAlarm;
-      Application.cache.setBool(QuarterAlarmTag, isQuarterAlarm);
+      Application.cache.write(QuarterAlarmTag, isQuarterAlarm);
     }
     if(isHalfAlarm!=null){
       Application.myClock!.canHalfAlarm=isHalfAlarm;
-      Application.cache.setBool(HalfAlarmTag, isHalfAlarm);
+      Application.cache.write(HalfAlarmTag, isHalfAlarm);
     }
     if(isHourAlarm!=null){
       Application.myClock!.canHourAlarm=isHourAlarm;
-      Application.cache.setBool(HourAlarmTag, isHourAlarm);
+      Application.cache.write(HourAlarmTag, isHourAlarm);
     }
     if(enableSound!=null){
       Application.myClock!.enableAlarmSound=enableSound;
-      Application.cache.setBool(EnableSoundTag, enableSound);
+      Application.cache.write(EnableSoundTag, enableSound);
     }
     if(enableFlash!=null){
       Application.myClock!.enableFlashLamp=enableFlash;
-      Application.cache.setBool(EnableFlashTag, enableFlash);
+      Application.cache.write(EnableFlashTag, enableFlash);
     }
     if(enableVibrate!=null){
       Application.myClock!.enableVibrate=enableVibrate;
-      Application.cache.setBool(EnableVibrateTag, enableVibrate);
+      Application.cache.write(EnableVibrateTag, enableVibrate);
     }
   }
 

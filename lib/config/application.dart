@@ -1,6 +1,9 @@
+import 'dart:html';
+
 import 'package:digital_clock/digital_clock.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:base_utility/define.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 //全局变量
 class Application {
@@ -9,7 +12,8 @@ class Application {
 
   static final bool fouceInit = true;
 
-  static late SharedPreferences cache;
+  // static late SharedPreferences cache;
+  static late Cache cache;
   static String? defaultSkin;
   static late String appRootPath;
   static late Size screenSize;

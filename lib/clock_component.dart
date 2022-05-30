@@ -303,17 +303,17 @@ class ClockComponentState extends State<ClockComponent>
 
   void getAlarmCache() {
     Application.myClock!.canQuarterAlarm =
-        Application.cache.getBool(QuarterAlarmTag) ?? true;
+        Application.cache.read(QuarterAlarmTag,defValue: true)!;
     Application.myClock!.canHalfAlarm =
-        Application.cache.getBool(HalfAlarmTag) ?? true;
+        Application.cache.read(HalfAlarmTag,defValue: true)!;
     Application.myClock!.canHourAlarm =
-        Application.cache.getBool(HourAlarmTag) ?? true;
+        Application.cache.read(HourAlarmTag,defValue: true)!;
     Application.myClock!.enableVibrate =
-        Application.cache.getBool(EnableVibrateTag) ?? true;
+        Application.cache.read(EnableVibrateTag,defValue: true)!;
     Application.myClock!.enableFlashLamp =
-        Application.cache.getBool(EnableFlashTag) ?? true;
+        Application.cache.read(EnableFlashTag,defValue: true)!;
     Application.myClock!.enableAlarmSound =
-        Application.cache.getBool(EnableSoundTag) ?? true;
+        Application.cache.read(EnableSoundTag,defValue: true)!;
   }
 
   @override
@@ -395,7 +395,7 @@ class ClockComponentState extends State<ClockComponent>
   }
 
   void setDefaultSkin(String skinName) {
-    Application.cache.setString(DefaultSkin, skinName);
+    Application.cache.write(DefaultSkin, skinName);
   }
 
   void defaultExitAction(BuildContext context) {
